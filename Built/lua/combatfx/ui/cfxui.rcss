@@ -1,0 +1,436 @@
+/* combatfx windows. Overlay styles live in combatfx.rcss (unchanged). */
+body { font-family: "Segoe UI"; font-size: 13px; color: #e6ebf5; margin: 0; padding: 0; width: 100%; height: 100%; }
+div { display: block; } span { display: inline; } img { display: inline-block; }
+.dim { color: #8691a8; } .ok { color: #6fe39a; } .wn { color: #ffc35a; }
+
+/* ---------------- glass shell */
+.shell { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.g0 { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: -3; pointer-events: none; border-radius: 13px; background-color: #05060cd8; border: 1px #00000080; }
+.g1 { position: absolute; left: 1px; top: 1px; right: 1px; bottom: 1px; z-index: -2; pointer-events: none; border-radius: 12px; background-color: #0e0c1cf4; decorator: vertical-gradient(#1e1a36f0 #0b0a16f8); border: 1px #8a6cf048; border-top-color: #c8b0ff70; }
+.g2 { position: absolute; left: 2px; top: 2px; right: 2px; height: 40px; z-index: -1; pointer-events: none; border-radius: 11px 11px 0px 0px; decorator: vertical-gradient(#ffffff14 #ffffff00); }
+
+/* ---------------- title bars (drag="1") */
+.hd { position: absolute; left: 0; right: 0; top: 0; height: 52px; }
+.hd.sm { height: 36px; }
+.hico { position: absolute; left: 12px; top: 8px; width: 36px; height: 36px; pointer-events: none; }
+.hd.sm .hico { left: 9px; top: 6px; width: 24px; height: 24px; }
+.htt { position: absolute; left: 56px; top: 8px; line-height: 20px; font-size: 17px; font-weight: bold; color: #f4f0ff; white-space: nowrap; pointer-events: none; }
+.hsub { position: absolute; left: 56px; top: 29px; line-height: 14px; font-size: 11px; color: #8a86a6; white-space: nowrap; pointer-events: none; }
+.hd.sm .htt { left: 40px; top: 0px; line-height: 36px; font-size: 13px; }
+.hbtns { position: absolute; right: 10px; top: 12px; white-space: nowrap; }
+.hd.sm .hbtns { top: 7px; right: 8px; }
+.hb { display: inline-block; height: 26px; line-height: 25px; padding: 0px 12px; margin-left: 6px; border-radius: 13px; font-size: 11px; font-weight: bold; color: #d8d2f0; background-color: #ffffff0a; border: 1px #ffffff1c; vertical-align: top; transition: background-color border-color 0.15s linear-in-out; }
+.hb:hover { background-color: #8a6cf040; border-color: #c8b0ff90; color: #ffffff; }
+.hb.go { color: #ffffff; decorator: vertical-gradient(#2ea868 #17603a); border-color: #6fe39a90; }
+.hb.x { width: 26px; padding: 0px; text-align: center; font-size: 15px; line-height: 24px; }
+.hb.x:hover { background-color: #ff4a3a40; border-color: #ff8a7a80; }
+.hd.sm .hb { height: 22px; line-height: 21px; padding: 0px 9px; font-size: 10px; }
+.hd.sm .hb.x { width: 22px; padding: 0px; font-size: 13px; line-height: 20px; }
+.glow { position: absolute; height: 2px; pointer-events: none; }
+.gl { left: 10px; right: 50%; decorator: horizontal-gradient(#8a6cf000 #b090ffd0); }
+.gr { left: 50%; right: 10px; decorator: horizontal-gradient(#b090ffd0 #8a6cf000); }
+
+/* ---------------- segmented tabs */
+#tabs { position: absolute; left: 14px; right: 14px; top: 62px; height: 62px; border-radius: 9px; background-color: #08070fd0; border: 1px #ffffff12; }
+.tab { box-sizing: border-box; position: relative; float: left; width: 11.11%; height: 28px; line-height: 28px; text-align: center; font-size: 9px; font-weight: bold; color: #8e88aa; border-radius: 8px; white-space: nowrap; transition: background-color color 0.15s linear-in-out; }
+.tab:hover { color: #efe8ff; background-color: #ffffff08; }
+.tab.sel { color: #ffffff; decorator: vertical-gradient(#5a3ca8e8 #2e1e64e8); border: 1px #b090ff70; border-bottom: 2px #c8a8ff; }
+
+/* ---------------- page + footer */
+#spage { position: absolute; left: 14px; right: 14px; top: 134px; bottom: 40px; overflow: hidden auto; padding-right: 4px; }
+#spage scrollbarvertical { width: 6px; }
+#spage scrollbarvertical slidertrack { background-color: #ffffff08; }
+#spage scrollbarvertical sliderbar { background-color: #8a7cc080; border-radius: 3px; }
+#spage scrollbarvertical sliderarrowdec, #spage scrollbarvertical sliderarrowinc { width: 0px; height: 0px; }
+body.inp #spage { bottom: 82px; }
+#inrow { display: none; position: absolute; left: 14px; right: 14px; bottom: 40px; height: 36px; border-radius: 10px; background-color: #141226; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; white-space: nowrap; }
+body.inp #inrow { display: block; }
+#inlab { position: absolute; left: 12px; top: 0px; line-height: 36px; font-size: 11px; font-weight: bold; color: #b9a4ff; }
+#inbox { position: absolute; left: 150px; top: 6px; width: 170px; height: 24px; border-radius: 7px; background-color: #06050c; border: 1px #8a6cf070; }
+input.text { position: absolute; left: 6px; top: 3px; width: 158px; height: 18px; background-color: transparent; border-width: 0px; color: #ffffff; font-size: 13px; }
+#inok { position: absolute; left: 330px; top: 6px; height: 24px; line-height: 23px; padding: 0px 14px; border-radius: 7px; font-size: 11px; font-weight: bold; color: #ffffff; decorator: vertical-gradient(#7a54e0 #4a2ea0); border: 1px #c8a8ffa0; }
+#inok:hover { border-color: #ffffff; }
+#inhint { position: absolute; left: 404px; right: 10px; top: 0px; line-height: 36px; font-size: 11px; color: #7f7a9c; white-space: nowrap; overflow: hidden; }
+#sfoot { position: absolute; left: 2px; right: 2px; bottom: 2px; height: 30px; border-radius: 0px 0px 11px 11px; background-color: #07060ed0; border-top: 1px #ffffff12; }
+#fdot { position: absolute; left: 14px; top: 11px; width: 8px; height: 8px; border-radius: 4px; background-color: #4a4670; }
+#fdot.live { background-color: #6fe39a; } #fdot.sim { background-color: #ffb000; }
+#smsg { position: absolute; left: 30px; right: 220px; top: 0; line-height: 30px; font-size: 11px; color: #a49ec0; white-space: nowrap; overflow: hidden; }
+#status { position: absolute; right: 12px; top: 6px; height: 18px; line-height: 18px; padding: 0px 10px; border-radius: 9px; background-color: #ffffff0a; border: 1px #ffffff14; font-size: 11px; color: #c8b0ff; white-space: nowrap; }
+
+/* ---------------- shared bits */
+.sec { height: 18px; line-height: 18px; margin: 0px 0px 6px 0px; font-size: 10px; font-weight: bold; color: #b9a4ff; white-space: nowrap; }
+.sec .dim { font-weight: normal; }
+.clr { clear: both; height: 6px; }
+.card { position: relative; padding: 8px 12px 6px 12px; margin-bottom: 8px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; }
+.sw { position: relative; display: inline-block; width: 38px; height: 20px; border-radius: 10px; background-color: #1c1a30; border: 1px #ffffff22; vertical-align: top; transition: background-color border-color 0.18s linear-in-out; }
+.sw .kn { position: absolute; left: 2px; top: 2px; width: 14px; height: 14px; border-radius: 7px; decorator: vertical-gradient(#c8d2e6 #7a869e); transition: left 0.18s cubic-out; }
+.sw.on { decorator: horizontal-gradient(#1a5a3a #2ea868); border-color: #6fe39a90; }
+.sw.on .kn { left: 20px; decorator: vertical-gradient(#ffffff #cfe8d8); }
+.btn { display: inline-block; height: 28px; line-height: 27px; padding: 0px 14px; margin: 0px 6px 6px 0px; border-radius: 8px; font-size: 12px; color: #e2dcf4; background-color: #16142a; decorator: vertical-gradient(#ffffff10 #ffffff00); border: 1px #ffffff1c; vertical-align: top; transition: background-color border-color 0.15s linear-in-out; }
+.btn:hover { background-color: #241e44; border-color: #b090ff80; color: #ffffff; }
+.btn.go { decorator: vertical-gradient(#2ea868 #17603a); border-color: #6fe39a90; color: #ffffff; font-weight: bold; }
+.btn.stop { decorator: vertical-gradient(#c0402e #6a1a10); border-color: #ff8a7a90; color: #ffffff; font-weight: bold; }
+.btn.pri { decorator: vertical-gradient(#7a54e0 #4a2ea0); border-color: #c8a8ffa0; color: #ffffff; font-weight: bold; }
+.btn.sm { height: 22px; line-height: 21px; padding: 0px 10px; font-size: 11px; }
+.btn img { width: 18px; height: 18px; margin: 0px 6px 0px -4px; vertical-align: middle; }
+.seg { display: inline-block; height: 26px; border-radius: 8px; background-color: #08070fd0; border: 1px #ffffff14; vertical-align: top; white-space: nowrap; }
+.sg { display: inline-block; height: 24px; line-height: 24px; padding: 0px 12px; border-radius: 7px; font-size: 11px; color: #8e88aa; vertical-align: top; transition: background-color color 0.15s linear-in-out; }
+.sg:hover { color: #ffffff; background-color: #ffffff0a; }
+.sg.sel { color: #ffffff; font-weight: bold; decorator: vertical-gradient(#5a3ca8e8 #2e1e64e8); border: 1px #b090ff70; }
+.step { display: inline-block; height: 26px; white-space: nowrap; vertical-align: top; }
+.sb { display: inline-block; width: 26px; height: 26px; line-height: 24px; text-align: center; border-radius: 13px; font-size: 15px; font-weight: bold; color: #d8d2f0; background-color: #16142a; border: 1px #ffffff22; vertical-align: top; }
+.sb:hover { border-color: #b090ff; color: #ffffff; background-color: #241e44; }
+.sv { display: inline-block; min-width: 58px; height: 24px; line-height: 24px; margin: 1px 6px 0px 6px; padding: 0px 6px; text-align: center; border-radius: 12px; font-size: 12px; font-weight: bold; color: #ffffff; background-color: #08070f; border: 1px #ffffff12; vertical-align: top; }
+.row { position: relative; height: 40px; margin-bottom: 6px; border-radius: 9px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff12; white-space: nowrap; }
+.row .rl { position: absolute; left: 14px; top: 5px; font-size: 12px; font-weight: bold; color: #ece8fa; }
+.row .rd { position: absolute; left: 14px; top: 21px; font-size: 10px; color: #7f7a9c; }
+.row .rc { position: absolute; right: 10px; top: 6px; }
+
+/* ---------------- Colors: kind cards (2 columns) */
+.kc { box-sizing: border-box; position: relative; float: left; width: 49%; margin: 0px 2% 6px 0px; height: 48px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; transition: background-color border-color 0.15s linear-in-out; }
+.kc.c2 { margin-right: 0px; }
+.fxc:hover { border-color: #ffffff36; background-color: #1a1734; }
+.kc:hover { border-color: #ffffff36; background-color: #1a1734; }
+.kc.sel { border-color: #c8a8ff; background-color: #1e1838; }
+.kc.off { opacity: 0.55; }
+.kpv { position: absolute; left: 6px; top: 6px; width: 96px; height: 34px; border-radius: 8px; background-color: #05040a; decorator: vertical-gradient(#0a0814 #1a1628); border: 1px #ffffff10; overflow: hidden; }
+.kbar { position: absolute; left: 0px; top: 0px; bottom: 0px; width: 5px; }
+.kn2 { position: absolute; left: 6px; right: 2px; top: 0px; line-height: 34px; text-align: center; font-size: 17px; font-weight: bold; font-effect: outline(2px #000000); white-space: nowrap; }
+.kl { position: absolute; left: 112px; top: 6px; right: 56px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; overflow: hidden; }
+.kh { position: absolute; left: 112px; top: 24px; right: 56px; font-size: 10px; color: #7f7a9c; white-space: nowrap; overflow: hidden; }
+.kc .sw { position: absolute; right: 10px; top: 13px; }
+/* card itself selects; its switch stays clickable on its own (MQ2RmlUi reports the nearest id/action from the hovered element up) */
+.kc .sw { pointer-events: auto; }
+/* gem palette */
+.pal { display: inline-block; height: 36px; white-space: nowrap; }
+.gem { position: relative; display: inline-block; width: 26px; height: 26px; margin: 4px 5px 0px 0px; border-radius: 13px; border: 2px #00000090; vertical-align: top; transition: border-color 0.12s linear-in-out; }
+.gem:hover { border-color: #ffffff; }
+.gem.cur { border-color: #ffffff; }
+.gem .gh { position: absolute; left: 4px; top: 2px; width: 14px; height: 9px; border-radius: 7px; decorator: vertical-gradient(#ffffffb0 #ffffff00); pointer-events: none; }
+.gem .gs { position: absolute; left: 2px; right: 2px; bottom: 1px; height: 8px; border-radius: 6px; decorator: vertical-gradient(#00000000 #00000060); pointer-events: none; }
+.edt { position: relative; height: 48px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; padding: 4px 12px 0px 12px; }
+.edt .el { display: inline-block; width: 128px; height: 36px; padding-top: 3px; box-sizing: border-box; line-height: 15px; white-space: normal; font-size: 11px; font-weight: bold; color: #b9a4ff; vertical-align: top; overflow: hidden; }
+
+/* ---------------- Text & Motion / Effects */
+.fxc { box-sizing: border-box; position: relative; float: left; width: 49%; margin: 0px 2% 6px 0px; height: 40px; border-radius: 9px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff12; }
+.fxc.c2 { margin-right: 0px; }
+.fxc.on { border-color: #6fe39a50; }
+.fxc .sw { position: absolute; left: 10px; top: 9px; }
+.fxc .fl { position: absolute; left: 58px; top: 4px; right: 6px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; overflow: hidden; }
+.fxc .fd { position: absolute; left: 58px; top: 21px; right: 6px; font-size: 10px; color: #7f7a9c; white-space: nowrap; overflow: hidden; }
+.perf { position: relative; margin-top: 4px; height: 30px; line-height: 30px; padding: 0px 12px; border-radius: 9px; background-color: #08070f; border: 1px #ffffff10; font-size: 11px; color: #8e88aa; white-space: nowrap; overflow: hidden; }
+.perf .pk { font-size: 10px; font-weight: bold; color: #b9a4ff; margin-right: 10px; }
+.pv { color: #ffffff; font-weight: bold; }
+.stylepv { display: inline-block; margin-left: 12px; font-size: 18px; font-weight: bold; color: #ffd040; vertical-align: top; line-height: 26px; }
+
+/* ---------------- Themes */
+.thc { box-sizing: border-box; position: relative; float: left; width: 32%; margin: 0px 2% 8px 0px; height: 108px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff16; overflow: hidden; transition: border-color 0.15s linear-in-out; }
+.thc.c3 { margin-right: 0px; }
+.thc:hover { border-color: #ffffff40; }
+.thc.sel { border-color: #c8a8ff; background-color: #1e1838; }
+.thp { position: absolute; left: 6px; right: 6px; top: 6px; height: 64px; border-radius: 7px; background-color: #05040a; decorator: vertical-gradient(#1a1a2a #06060c); border: 1px #ffffff10; overflow: hidden; }
+.thn { position: absolute; font-weight: bold; font-effect: outline(2px #000000); white-space: nowrap; }
+.thname { position: absolute; left: 12px; bottom: 20px; font-size: 12px; font-weight: bold; color: #ece8fa; }
+.thtag { position: absolute; right: 10px; bottom: 21px; height: 15px; line-height: 15px; padding: 0px 7px; border-radius: 8px; font-size: 9px; font-weight: bold; color: #0b0a16; background-color: #c8a8ff; }
+/* tfx1: animated DX11 theme previews (one canvas per card) */
+.thv { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; width: auto; height: auto; }
+.thsub { position: absolute; left: 12px; bottom: 6px; font-size: 9px; color: #8a84aa; white-space: nowrap; }
+.svr { position: relative; height: 32px; margin-bottom: 4px; border-radius: 8px; background-color: #0e0c1c; border: 1px #ffffff0e; white-space: nowrap; }
+.svr .svn { position: absolute; left: 12px; top: 0px; line-height: 32px; font-size: 12px; color: #ece8fa; }
+.svr .svb { position: absolute; right: 6px; top: 4px; }
+.svr .btn { margin: 0px 0px 0px 6px; }
+.empty { height: 32px; line-height: 32px; padding-left: 12px; border-radius: 8px; border: 1px #ffffff10; font-size: 11px; color: #7f7a9c; margin-bottom: 6px; }
+
+/* ---------------- Simulator */
+.scn { box-sizing: border-box; position: relative; float: left; width: 32%; margin: 0px 2% 6px 0px; height: 44px; border-radius: 9px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; transition: border-color background-color 0.15s linear-in-out; }
+.scn.c3 { margin-right: 0px; }
+.scn:hover { border-color: #ffffff40; background-color: #1a1734; }
+.scn.on { border-color: #ffb000; background-color: #2a1e08; }
+.scn img { position: absolute; left: 8px; top: 8px; width: 28px; height: 28px; }
+.scn .sl { position: absolute; left: 44px; top: 0px; right: 6px; line-height: 44px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; overflow: hidden; }
+.ctl { position: relative; height: 44px; margin-bottom: 8px; white-space: nowrap; }
+.ctl .btn { height: 34px; line-height: 33px; font-size: 13px; padding: 0px 18px; margin-top: 4px; }
+.ctlg { display: inline-block; margin: 8px 14px 0px 4px; vertical-align: top; }
+.ctlg .flab { display: inline-block; height: 26px; line-height: 26px; margin-right: 8px; font-size: 10px; font-weight: bold; color: #b9a4ff; vertical-align: top; }
+.pill { display: inline-block; height: 22px; line-height: 22px; margin-top: 10px; padding: 0px 10px; border-radius: 11px; font-size: 11px; color: #a49ec0; background-color: #ffffff0a; border: 1px #ffffff14; vertical-align: top; }
+.pill.run { color: #ffd27a; border-color: #ffb00080; background-color: #ffb00018; }
+.fire { display: inline-block; height: 26px; line-height: 25px; padding: 0px 11px 0px 8px; margin: 0px 6px 6px 0px; border-radius: 13px; font-size: 11px; color: #d8d2f0; background-color: #16142a; border: 1px #ffffff1c; vertical-align: top; }
+.fire:hover { border-color: #ffffff60; color: #ffffff; }
+.fire .fd2 { display: inline-block; width: 10px; height: 10px; margin: 0px 6px 0px 0px; border-radius: 5px; border: 1px #00000080; vertical-align: middle; }
+
+/* ---------------- XP & Loot tab */
+.tkc { position: relative; height: 66px; margin-bottom: 8px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; }
+.tkc.on { border-color: #6fe39a50; }
+.tkc img { position: absolute; left: 12px; top: 13px; width: 40px; height: 40px; }
+.tkc .tl1 { position: absolute; left: 64px; top: 10px; font-size: 14px; font-weight: bold; color: #f4f0ff; }
+.tkc .tl2 { position: absolute; left: 64px; top: 32px; right: 200px; font-size: 11px; color: #8e88aa; white-space: nowrap; overflow: hidden; }
+.tkc .sw { position: absolute; right: 14px; top: 22px; }
+.tkc .btn { position: absolute; right: 64px; top: 18px; margin: 0px; }
+
+/* ---------------- launcher (FX medallion) */
+#launch { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
+#lglow { position: absolute; left: -4px; top: -4px; width: 60px; height: 60px; opacity: 0.55; pointer-events: none; transition: opacity 0.2s linear-in-out; }
+#launch:hover #lglow { opacity: 1; }
+#lico { position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; pointer-events: none; }
+#ldot { position: absolute; right: 3px; top: 3px; width: 9px; height: 9px; border-radius: 5px; border: 1px #00000090; background-color: #6fe39a; pointer-events: none; }
+#launch.off #ldot { background-color: #ff6a5a; } #launch.sim #ldot { background-color: #ffb000; }
+
+/* ---------------- menu */
+#menu { position: absolute; left: 0; top: 0; right: 0; bottom: 0; padding: 6px; font-size: 12px; }
+.mhd { height: 26px; line-height: 24px; padding: 0px 8px 0px 30px; color: #c8a8ff; font-weight: bold; font-size: 11px; white-space: nowrap; border-bottom: 1px #ffffff12; margin-bottom: 4px; position: relative; }
+.mhd img { position: absolute; left: 4px; top: 1px; width: 20px; height: 20px; }
+.mi { height: 24px; line-height: 24px; padding: 0px 8px 0px 26px; border-radius: 6px; white-space: nowrap; overflow: hidden; position: relative; color: #ddd8ee; transition: background-color 0.12s linear-in-out; }
+.mi:hover { background-color: #4a3290; color: #ffffff; }
+.mi .mck { position: absolute; left: 9px; top: 8px; width: 8px; height: 8px; border-radius: 4px; background-color: #ffffff18; }
+.mi.on .mck { background-color: #6fe39a; }
+.mi.stop { color: #ffb0a4; }
+.msep { height: 1px; margin: 4px 6px; background-color: #ffffff14; }
+
+/* ---------------- tiles (XP / loot / meter) */
+.tiles { position: relative; }
+.tl { box-sizing: border-box; position: relative; float: left; width: 49%; margin: 0px 2% 6px 0px; height: 50px; border-radius: 9px; background-color: #121024; decorator: vertical-gradient(#ffffff10 #ffffff02); border: 1px #ffffff14; overflow: hidden; }
+.tl.c2 { margin-right: 0px; }
+.tl.w3 { width: 32%; } .tl.c3 { margin-right: 0px; }
+.tl > img { position: absolute; left: 7px; top: 12px; width: 26px; height: 26px; }
+.tl .tv { position: absolute; left: 40px; right: 4px; top: 6px; line-height: 20px; font-size: 16px; font-weight: bold; color: #ffffff; white-space: nowrap; overflow: hidden; }
+.tl .tk { position: absolute; left: 40px; right: 4px; top: 28px; line-height: 14px; font-size: 10px; color: #8e88aa; white-space: nowrap; overflow: hidden; }
+#pn .tl > img { left: 5px; top: 13px; width: 22px; height: 22px; }
+#pn .tl .tv, #pn .tl .tk { left: 31px; right: 2px; }
+#pn .tl .tv { font-size: 14px; }
+.tl .tv.wait { font-size: 11px; font-weight: normal; color: #8e88aa; }
+.tw { position: absolute; left: 10px; right: 10px; top: 42px; bottom: 8px; }
+
+/* XP bars with tick marks */
+.xbar { position: relative; height: 20px; margin-bottom: 6px; border-radius: 10px; background-color: #06050c; border: 1px #ffffff1c; overflow: hidden; }
+.xfill { position: absolute; left: 0px; top: 0px; bottom: 0px; width: 0%; border-radius: 9px; transition: width 0.4s cubic-out; }
+#xpf { decorator: horizontal-gradient(#8a5a10 #ffd040); } #aaf { decorator: horizontal-gradient(#123e7a #4aa8ff); }
+.xsh { position: absolute; left: 0px; right: 0px; top: 0px; height: 9px; decorator: vertical-gradient(#ffffff30 #ffffff00); pointer-events: none; }
+.tick { position: absolute; top: 3px; bottom: 3px; width: 1px; background-color: #ffffff22; }
+.xlab { position: absolute; left: 0px; right: 0px; top: 0px; line-height: 20px; text-align: center; font-size: 11px; font-weight: bold; color: #ffffff; font-effect: outline(1px #000000); white-space: nowrap; }
+
+/* loot: coins + rows + pager */
+.coins { position: relative; height: 40px; margin-bottom: 6px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff10 #ffffff02); border: 1px #ffd04030; text-align: center; white-space: nowrap; }
+.coin { display: inline-block; height: 38px; line-height: 38px; margin: 0px 6px; font-size: 16px; font-weight: bold; vertical-align: top; }
+.coin img { width: 22px; height: 22px; margin: 0px 4px 0px 0px; vertical-align: middle; }
+.coin.pp { color: #e0e8ff; } .coin.gp { color: #ffd040; } .coin.sp { color: #d0d6e2; } .coin.cp { color: #e09060; }
+.coin.z { color: #5a5670; }
+.mini { white-space: nowrap; }
+.mini img { width: 14px; height: 14px; margin: 0px 2px 0px 4px; vertical-align: middle; }
+.lrow { position: relative; height: 22px; margin-bottom: 3px; border-radius: 6px; background-color: #0e0c1c; border: 1px #ffffff0c; white-space: nowrap; overflow: hidden; }
+.lrow.empty2 { background-color: transparent; border-color: transparent; }
+.ln { position: absolute; left: 8px; right: 96px; top: 0px; line-height: 22px; font-size: 11px; color: #ece8fa; overflow: hidden; }
+.lc { color: #c8a8ff; font-weight: bold; margin-right: 4px; }
+.lv { position: absolute; right: 8px; top: 0px; line-height: 22px; font-size: 11px; font-weight: bold; color: #ffd27a; text-align: right; }
+.lv.unk { color: #7f7a9c; font-weight: normal; }
+.pgr { position: relative; height: 24px; margin-top: 2px; text-align: center; white-space: nowrap; }
+.arr { display: inline-block; width: 26px; height: 22px; line-height: 21px; margin: 1px 6px 0px 6px; border-radius: 11px; background-color: #16142a; border: 1px #ffffff1c; font-size: 10px; color: #d8d2f0; vertical-align: top; text-align: center; }
+.arr:hover { background-color: #241e44; color: #ffffff; border-color: #b090ff80; }
+.arr.dis { color: #3a3650; border-color: #ffffff0a; }
+.pgr #pg { display: inline-block; min-width: 70px; line-height: 24px; font-size: 11px; color: #a49ec0; vertical-align: top; }
+.note { position: absolute; left: 0px; right: 0px; bottom: 0px; line-height: 14px; font-size: 10px; color: #6a6688; text-align: center; white-space: nowrap; }
+.lempty { height: 60px; line-height: 60px; text-align: center; font-size: 11px; color: #6a6688; }
+
+/* meter footer */
+.mfoot { position: absolute; left: 0px; right: 0px; bottom: 0px; height: 20px; line-height: 20px; font-size: 11px; color: #a49ec0; white-space: nowrap; overflow: hidden; }
+.mtag { position: absolute; right: 0px; top: 2px; height: 16px; line-height: 16px; padding: 0px 7px; border-radius: 8px; font-size: 9px; font-weight: bold; color: #8e88aa; background-color: #ffffff0a; }
+.mtag.sim { color: #0b0a16; background-color: #ffb000; }
+.xc *, .kc *, .fxc *, .thc *, .styc *, .scn *, .tkc .sw *, .sw *, .gem *, .btn *, .tab *, .mi *, .hb *, .arr *, .sb *, .sg *, .fire *, .mki *, .npcrow *, .otile * { pointer-events: none; }
+
+/* per-lane text effect editor */
+.tfx { position: relative; margin-top: 8px; height: 112px; border-radius: 10px; background-color: #121024; border: 1px #ffffff14; }
+.tfs { position: absolute; left: 8px; top: 8px; width: 150px; height: 94px; border-radius: 8px; background-color: #05060c; text-align: center; }
+.tfsv { display: block; line-height: 94px; font-size: 26px; font-weight: bold; white-space: nowrap; }
+.tfr { position: absolute; left: 172px; right: 8px; height: 30px; line-height: 30px; white-space: nowrap; }
+.tfr .el { display: inline-block; width: 96px; }
+.tfr .el.sz { width: 36px; margin-left: 8px; }
+.tfr.r1 { top: 10px; }
+.tfr.r2 { top: 48px; }
+.tfx .seg .sg { padding: 0px 6px; font-size: 11px; }
+.gem.sm { width: 18px; height: 18px; margin: 4px 3px 0px 0px; border-radius: 9px; }
+.gem.sm .gh { left: 3px; width: 10px; height: 6px; }
+.tfl { position: absolute; left: 172px; bottom: 6px; font-size: 10px; }
+
+/* proc / crit style picker */
+.styc { box-sizing: border-box; position: relative; float: left; width: 23.5%; margin: 0px 2% 10px 0px; height: 118px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff10 #ffffff02); border: 1px #ffffff16; overflow: hidden; transition: border-color background-color 0.15s linear-in-out; }
+.styc.c3 { margin-right: 0px; }
+.styc.c4 { margin-right: 0px; }
+.styc:hover { border-color: #ffffff40; background-color: #1a1734; }
+.styc.sel { border-color: #c8a8ff; background-color: #221A40; decorator: vertical-gradient(#5a3ca838 #1e1838); }
+.styi { position: absolute; left: 6px; top: 6px; right: 6px; height: 78px; width: auto; border-radius: 7px; border: 1px #00000060; }
+.styn { position: absolute; left: 10px; bottom: 8px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; overflow: hidden; }
+.stytag { position: absolute; right: 8px; bottom: 8px; font-size: 9px; font-weight: bold; color: #c8a8ff; }
+
+/* ---------------- Markers tab */
+.mknav { height: 28px; margin-bottom: 6px; white-space: nowrap; }
+.npcrow { position: relative; height: 26px; margin-bottom: 3px; border-radius: 7px; background-color: #0e0c1c; border: 1px #ffffff0c; white-space: nowrap; overflow: hidden; }
+.npcrow:hover { background-color: #1a1734; border-color: #b090ff60; }
+.npcrow .nn { position: absolute; left: 10px; top: 0px; line-height: 26px; font-size: 12px; color: #ece8fa; }
+.npcrow .nd { position: absolute; right: 10px; top: 0px; line-height: 26px; font-size: 11px; color: #8e88aa; }
+.mkcard { position: relative; padding: 8px 10px 8px 10px; margin-bottom: 8px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; }
+.mkhd { position: relative; height: 28px; margin-bottom: 4px; }
+.mkhd .mkn { font-size: 13px; font-weight: bold; color: #ece8fa; }
+.mkhd .mkmeta { margin-left: 8px; font-size: 10px; color: #8e88aa; }
+.mkhd .btn { position: absolute; right: 0px; top: 0px; margin: 0px; }
+.mkrow { margin: 4px 0px 2px 0px; white-space: nowrap; overflow: hidden; }
+.mki { display: inline-block; width: 28px; height: 28px; margin: 0px 4px 4px 0px; border-radius: 7px; background-color: #08070fd0; border: 1px #ffffff18; vertical-align: top; text-align: center; }
+.mki img { width: 22px; height: 22px; margin-top: 3px; }
+.mki:hover { border-color: #b090ff80; }
+.mki.sel { border-color: #c8a8ff; background-color: #2a1e50; }
+/* t363: native nimbus list (Body FX) - height ends above the search/footer (default 600px window) so last rows can scroll into view */
+.nlist { box-sizing: border-box; height: 140px; overflow: hidden auto; margin-bottom: 10px; padding-bottom: 8px; }
+.nlist scrollbarvertical { width: 6px; }
+.nlist scrollbarvertical slidertrack { background-color: #ffffff08; }
+.nlist scrollbarvertical sliderbar { background-color: #8a7cc080; border-radius: 3px; }
+.nlist scrollbarvertical sliderarrowdec, .nlist scrollbarvertical sliderarrowinc { width: 0px; height: 0px; }
+.nlist .npcrow { margin-right: 8px; }
+
+/* orn1: Ornaments tab (thumbnail grid + large preview) */
+.owrap { position: relative; height: 262px; }
+.ogrid { position: absolute; left: 0px; top: 0px; width: 400px; height: 262px; }
+.otile { box-sizing: border-box; position: relative; float: left; width: 96px; height: 86px; margin: 0px 4px 4px 0px; border-radius: 8px; background-color: #0e0c1c; border: 1px #ffffff10; overflow: hidden; transition: background-color border-color 0.12s linear-in-out; }
+.otile:hover { background-color: #1a1734; border-color: #b090ff70; }
+.otile.sel { border-color: #c8a8ff; background-color: #221a40; }
+.otile.on { border-color: #6aff8a90; }
+.otile.miss { opacity: 0.45; border-color: #ff8a6a60; }
+.otile img { position: absolute; left: 12px; top: 2px; width: 72px; height: 66px; }
+.otile .ol { position: absolute; left: 3px; right: 3px; bottom: 2px; line-height: 14px; font-size: 9px; color: #c8c2e0; text-align: center; white-space: nowrap; overflow: hidden; }
+.opanel { position: absolute; left: 408px; right: 0px; top: 0px; height: 262px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff14; padding: 6px; }
+.opbig { position: relative; margin: 0px auto; width: 150px; height: 150px; border-radius: 8px; overflow: hidden; border: 1px #ffffff10; }
+.opbig img { position: absolute; left: 0px; top: 0px; width: 150px; height: 150px; }
+.opempty { line-height: 18px; padding-top: 56px; box-sizing: border-box; text-align: center; font-size: 11px; white-space: normal; }
+.opname { margin-top: 4px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; overflow: hidden; text-align: center; }
+.opmeta { font-size: 10px; color: #8e88aa; white-space: nowrap; overflow: hidden; text-align: center; margin-bottom: 4px; }
+.obtns .btn { margin: 0px 4px 4px 0px; }
+.onav { height: 26px; margin: 2px 0px 6px 0px; white-space: nowrap; }
+.onav .btn { margin: 0px 8px 0px 0px; }
+.onav .dim { line-height: 22px; margin-right: 8px; font-size: 11px; }
+.opbig.oset { width: 124px; height: 124px; }
+.opbig.oset img { width: 124px; height: 124px; }
+.opcs { height: 30px; text-align: center; white-space: nowrap; overflow: hidden; margin-bottom: 4px; }
+.opcs img { width: 28px; height: 28px; margin: 0px 1px; vertical-align: middle; }
+
+/* f8: Combat+ role cards (preview canvas + switch + look picker) */
+.rlc { box-sizing: border-box; position: relative; float: left; width: 49%; margin: 0px 2% 8px 0px; height: 142px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #ffffff16; overflow: hidden; }
+.rlc.c2 { margin-right: 0px; }
+.rlc.off .thp, .rlc.off .rln { opacity: 0.45; }
+.rlc .thp:hover { border-color: #ffffff40; }
+.rlc .thp * { pointer-events: none; }
+.rlc .rln { position: absolute; left: 12px; top: 74px; font-size: 12px; font-weight: bold; color: #ece8fa; white-space: nowrap; }
+.rlc .rld { position: absolute; left: 12px; right: 58px; top: 91px; font-size: 9px; color: #8a84aa; white-space: nowrap; overflow: hidden; }
+.rlc .rlsw { position: absolute; right: 10px; top: 76px; }
+.rlc .rlseg { position: absolute; left: 8px; top: 108px; }
+.rlc .rlseg .sg { padding: 0px 9px; }
+
+/* ---------------- f8b: Parses + Loadouts */
+.ok { color: #6fe39a; } .wn { color: #ffc35a; }
+.pseg { height: 32px; margin-bottom: 4px; white-space: nowrap; }
+.pseg .sg { padding: 0px 10px; }
+.prow { position: relative; height: 24px; margin-bottom: 3px; border-radius: 6px; background-color: #0e0c1c; border: 1px #ffffff0c; white-space: nowrap; overflow: hidden; }
+.prow:hover { border-color: #ffffff40; background-color: #1a1734; }
+.prow.sel { border-color: #c8a8ff; background-color: #1e1838; }
+.prow.cmp { border-left: 3px #ffb000; }
+.prow * { pointer-events: none; }
+.prow .pd { position: absolute; left: 8px; top: 0px; width: 74px; line-height: 24px; font-size: 10px; color: #8e88aa; }
+.prow .pm { position: absolute; left: 84px; top: 0px; width: 210px; line-height: 24px; font-size: 11px; font-weight: bold; color: #ece8fa; overflow: hidden; }
+.prow .pz { position: absolute; left: 298px; top: 0px; width: 150px; line-height: 24px; font-size: 10px; color: #8e88aa; overflow: hidden; }
+.prow .ps { position: absolute; left: 452px; top: 0px; width: 40px; line-height: 24px; font-size: 10px; color: #a49ec0; text-align: right; }
+.prow .pv2 { position: absolute; right: 8px; top: 0px; line-height: 24px; font-size: 11px; font-weight: bold; color: #ffd27a; text-align: right; }
+.prow .pl { position: absolute; left: 500px; top: 5px; height: 14px; line-height: 14px; padding: 0px 6px; border-radius: 7px; font-size: 9px; color: #0b0a16; background-color: #c8a8ff; }
+.fpv { position: relative; height: 92px; margin: 6px 0px 6px 0px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #c8a8ff40; overflow: hidden; }
+.fpv .fpt { position: absolute; left: 12px; top: 6px; right: 130px; font-size: 13px; font-weight: bold; color: #ffffff; white-space: nowrap; overflow: hidden; }
+.fpv .fpd { position: absolute; left: 12px; top: 24px; right: 130px; font-size: 10px; color: #8e88aa; white-space: nowrap; overflow: hidden; }
+.fpv .fpn { position: absolute; right: 12px; top: 6px; font-size: 18px; font-weight: bold; color: #ffd27a; }
+.fpv .fps { position: absolute; left: 12px; top: 38px; right: 12px; font-size: 10px; color: #c8cce0; white-space: nowrap; overflow: hidden; }
+.fpv .fmix { position: absolute; left: 12px; right: 12px; top: 54px; height: 6px; border-radius: 3px; background-color: #ffffff10; white-space: nowrap; overflow: hidden; }
+.fpv .fmx { display: inline-block; height: 6px; vertical-align: top; }
+.fpv .ftl { position: absolute; left: 12px; right: 12px; top: 64px; height: 10px; border-bottom: 1px #ffffff20; }
+.fpv .ftm { position: absolute; top: 1px; width: 2px; height: 8px; }
+.fpv .ftg { position: absolute; top: 0px; height: 10px; background-color: #ff504030; }
+.fpv .fpk { position: absolute; left: 12px; right: 12px; top: 76px; font-size: 9px; color: #8e88aa; white-space: nowrap; overflow: hidden; }
+.fbt { white-space: nowrap; margin-bottom: 4px; }
+.fbt .btn { padding: 0px 8px; margin-right: 4px; }
+.cmpw { position: relative; height: 104px; white-space: nowrap; }
+.cmpw .fpv, .cmpw .empty { display: inline-block; box-sizing: border-box; width: 49%; margin-right: 1%; vertical-align: top; }
+.crow { position: relative; height: 20px; border-bottom: 1px #ffffff0a; white-space: nowrap; font-size: 11px; }
+.crow.ch { color: #b9a4ff; font-weight: bold; font-size: 10px; }
+.crow .c1 { position: absolute; left: 10px; top: 0px; line-height: 20px; color: #c8cce0; }
+.crow .c2 { position: absolute; left: 260px; top: 0px; width: 110px; line-height: 20px; text-align: right; color: #ffffff; }
+.crow .c3 { position: absolute; left: 380px; top: 0px; width: 110px; line-height: 20px; text-align: right; color: #ffffff; }
+.crow .c4 { position: absolute; left: 510px; top: 0px; width: 120px; line-height: 20px; text-align: right; font-weight: bold; }
+.crow.ch .c1, .crow.ch .c2, .crow.ch .c3, .crow.ch .c4 { color: #b9a4ff; }
+.note2 { margin: 2px 0px 8px 0px; padding: 6px 10px; border-radius: 8px; background-color: #0e0c1c; border: 1px #ffffff0c; font-size: 10px; line-height: 14px; color: #8e88aa; }
+.xpv { margin: -2px 0px 8px 0px; padding: 6px 10px; border-radius: 8px; background-color: #05040a; border: 1px #ffffff14; font-size: 11px; line-height: 15px; color: #ffe08a; white-space: nowrap; overflow: hidden; }
+.xpv.big { font-size: 10px; line-height: 13px; color: #c8cce0; }
+.lot { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
+.lot .los { position: absolute; top: 6px; width: 12px; height: 12px; border-radius: 6px; border: 1px #00000080; }
+.lot .lotn { position: absolute; left: 100px; top: 4px; right: 6px; font-size: 10px; font-weight: bold; color: #ffe08a; white-space: nowrap; overflow: hidden; text-align: right; }
+.lot .lotl { position: absolute; left: 6px; right: 6px; top: 24px; font-size: 9px; color: #c8cce0; white-space: nowrap; overflow: hidden; }
+.lot .lotl.l2 { top: 40px; color: #8e88aa; }
+.thtag.rl2 { color: #ece8fa; background-color: #ffffff20; }
+.lol { font-size: 11px; line-height: 16px; color: #c8cce0; margin-bottom: 6px; }
+/* portable setup card (Effects tab) */
+.psetup { font-size: 11px; line-height: 15px; }
+.pline { display: block; margin: 1px 0px; padding-left: 74px; }
+.pline .pk { display: inline-block; width: 74px; margin-left: -74px; color: #a99fd0; }
+.pbtns { display: block; margin-top: 4px; }
+
+/* ---------------- fd1: Parses > fight detail (graph, tables, event log) */
+.fdh { position: relative; height: 40px; margin: 2px 0px 4px 0px; border-radius: 10px; background-color: #121024; decorator: vertical-gradient(#ffffff0c #ffffff02); border: 1px #c8a8ff40; white-space: nowrap; overflow: hidden; }
+.fdh .btn { position: absolute; left: 8px; top: 8px; margin: 0px; }
+.fdh .fdt { position: absolute; left: 86px; top: 4px; right: 150px; font-size: 13px; font-weight: bold; color: #ffffff; overflow: hidden; }
+.fdh .fdd { position: absolute; left: 86px; top: 22px; right: 150px; font-size: 10px; color: #8e88aa; overflow: hidden; }
+.fdh .fdn { position: absolute; right: 12px; top: 3px; font-size: 16px; font-weight: bold; color: #ffd27a; }
+.fdh .fdm { position: absolute; right: 12px; top: 23px; font-size: 10px; color: #c8cce0; }
+.fgo { white-space: nowrap; margin: 2px 0px 4px 0px; }
+.fgo .seg { margin-right: 8px; }
+.fgo .sg { padding: 0px 9px; }
+.fgw { position: relative; height: 196px; margin: 2px 0px 4px 0px; border-radius: 10px; background-color: #0a0914; border: 1px #ffffff14; overflow: hidden; }
+.fgp { position: absolute; left: 44px; top: 10px; width: 600px; height: 150px; border-left: 1px #ffffff24; border-bottom: 1px #ffffff34; overflow: hidden; }
+.fgh { position: absolute; left: 0px; width: 600px; height: 1px; background-color: #ffffff0c; }
+.fga { position: absolute; bottom: 0px; background-color: #ffffff1c; }
+.fgl { position: absolute; }
+.fgb { position: absolute; bottom: 0px; }                                   /* ps1: bars for fights under 3 s */
+.fgs { position: absolute; top: 0px; height: 150px; background-color: #c8a8ff26; border-left: 1px #c8a8ff90; border-right: 1px #c8a8ff90; }
+.fgc { position: absolute; top: 0px; height: 150px; }
+.fgc:hover { background-color: #ffffff12; }
+.fgc.sel { background-color: #c8a8ff18; }
+.fgy { position: absolute; left: 2px; width: 38px; text-align: right; font-size: 9px; color: #8a93a6; }
+.fgx { position: absolute; top: 163px; font-size: 9px; color: #8a93a6; }
+.fgu { position: absolute; right: 10px; top: 2px; font-size: 9px; color: #8a93a6; }
+.fgm { position: absolute; left: 44px; top: 178px; width: 600px; height: 10px; border-bottom: 1px #ffffff20; }
+.fgm2 { position: relative; left: 44px; width: 600px; height: 10px; margin: 2px 0px 6px 0px; border-bottom: 1px #ffffff20; }
+.fgk { position: absolute; top: 1px; width: 2px; height: 8px; }
+.fgm2 .fgs { top: 0px; height: 10px; }
+.fgleg { white-space: normal; margin: 0px 0px 4px 0px; font-size: 10px; line-height: 18px; }
+.fgli { display: inline-block; height: 18px; padding: 0px 8px 0px 6px; margin: 0px 4px 3px 0px; border-radius: 9px; background-color: #121024; border: 1px #ffffff14; color: #d8dcea; }
+.fgli:hover { border-color: #c8a8ff80; }
+.fgli.off { color: #5a566e; }
+.fglc { display: inline-block; width: 10px; height: 4px; margin: 0px 5px 3px 0px; vertical-align: middle; }
+.fbk { padding: 5px 10px; margin: 0px 0px 4px 0px; border-radius: 8px; background-color: #16132c; border: 1px #c8a8ff50; }
+.fbh { font-size: 11px; font-weight: bold; color: #ffffff; }
+.fbl { font-size: 10px; line-height: 15px; color: #c8cce0; margin: 1px 0px 4px 0px; }
+.ftb { margin: 4px 0px 8px 0px; }
+.ftt { height: 18px; line-height: 18px; margin: 4px 0px 2px 0px; font-size: 10px; font-weight: bold; color: #b9a4ff; white-space: nowrap; }
+.ftt .dim { font-weight: normal; }
+.ftr { position: relative; height: 18px; border-bottom: 1px #ffffff08; white-space: nowrap; font-size: 10px; color: #e0e4f0; overflow: hidden; }
+.ftr.z { background-color: #ffffff05; }
+.ftr:hover { background-color: #ffffff0c; }
+.ftr.fth { color: #b9a4ff; font-weight: bold; border-bottom: 1px #ffffff20; }
+.ftc { position: absolute; top: 0px; line-height: 18px; text-align: right; overflow: hidden; }
+.ftc.l { text-align: left; }
+.ftc.on { color: #ffffff; }
+.fth .ftc:hover { color: #ffffff; }
+.fel { display: inline-block; height: 24px; line-height: 24px; margin: 0px 2px 0px 6px; font-size: 10px; color: #8e88aa; vertical-align: top; }
+.fev { display: inline-block; min-width: 120px; height: 24px; line-height: 24px; font-size: 11px; color: #ffffff; text-align: center; vertical-align: top; }
+.favb { position: relative; height: 10px; margin: 2px 0px 4px 0px; border-radius: 5px; background-color: #ffffff10; white-space: nowrap; overflow: hidden; }
+.favb .fmx { display: inline-block; height: 10px; vertical-align: top; }
+.wn2 { color: #ffc35a; }
+.fpv.open:hover { border-color: #ffffff90; }
+.ftr.ck *, .fgli *, .fpv.open *, .fgl, .fga, .fgb, .fgs, .fgh, .fgk { pointer-events: none; }
+/* ---------------- ps1: Parses > Settings (cards & sounds) */
+.nrow .row .rc { top: 8px; }
+.nsl { display: inline-block; height: 22px; line-height: 22px; margin: 0px 4px 0px 10px; font-size: 9px; font-weight: bold; color: #8e88aa; vertical-align: top; }
+.nsl.nsx { width: 140px; margin-left: 10px; font-weight: normal; color: #5e5a78; text-align: right; }
+.nrow .row .btn.sm { margin-right: 4px; vertical-align: top; }
+.nrow.off .row .rl { color: #8e88aa; }
+.nrow.off .row { background-color: #0e0c1c; }

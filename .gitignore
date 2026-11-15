@@ -1,0 +1,22 @@
+# not part of the repo
+*.zip
+.vs/
+x64/
+Debug/
+Release/
+build/
+obj/
+ipch/
+*.obj
+*.pdb
+*.ilk
+*.user
+*.suo
+*.aps
+*.tlog
+*.log
+*.bak*
+Thumbs.db
+desktop.ini
+__pycache__/
+*.pyc

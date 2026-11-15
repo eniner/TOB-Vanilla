@@ -1,0 +1,228 @@
+/* rmlfps v4: gold-accent glass (ueqtool/combatfx family). No shaders, filters or box-shadow; gradients only.
+   v4: CPU/GPU/VRAM tiles, CPU/GPU visualizer, the two graphs draw on MQ2RmlUi <canvas> (classic DOM bars stay as fallback).
+   Nothing animates in a loop. Decorative elements are pointer-events:none so clicks land on the right target. */
+body { font-family: "Segoe UI"; font-size: 12px; color: #ece4d6; margin: 0px; padding: 0px; width: 100%; height: 100%; }
+div { display: block; } span { display: inline; }
+.dim { color: #8f8878; } .good { color: #6fe39a; } .ok { color: #ffc35a; } .bad { color: #ff6a5a; }
+
+#bg { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; border-radius: 14px; background-color: #0f0d12f0; decorator: vertical-gradient(#ffd8a012 #00000000); border: 1px #ffc87040; border-top-color: #ffd8a080; pointer-events: none; }
+body.mode-clear #bg, body.mode-hover #bg { opacity: 0; }
+body.mode-hover:hover #bg { opacity: 1; }
+body.mode-clear, body.mode-hover { font-effect: outline(1px #000000d0); }
+body.mode-hover:hover { font-effect: none; }
+
+/* ---------- header (drag) ---------- */
+#hd { position: absolute; left: 0px; top: 0px; right: 0px; height: 46px; }
+.grip { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
+body.locked .grip { display: none; }
+#hico { position: absolute; left: 10px; top: 7px; width: 32px; height: 32px; pointer-events: none; }
+#title { position: absolute; left: 50px; top: 5px; height: 20px; line-height: 20px; font-size: 15px; font-weight: bold; color: #fff4e4; pointer-events: none; }
+#sub { position: absolute; left: 50px; top: 25px; right: 74px; height: 15px; line-height: 15px; font-size: 10.5px; color: #a09682; white-space: nowrap; overflow: hidden; pointer-events: none; }
+#lockic { display: none; color: #ffc35a; }
+body.locked #lockic { display: inline; }
+.ib { position: absolute; top: 10px; width: 26px; height: 24px; line-height: 22px; text-align: center; border-radius: 8px; font-size: 15px; font-weight: bold; color: #c8bca8; background-color: #ffffff08; border: 1px #ffffff14; }
+.ib:hover { background-color: #f0b06030; border-color: #ffd8a090; color: #ffffff; }
+#a-x:hover { background-color: #a0303060; border-color: #ff8a8aa0; }
+#a-x { right: 10px; } #a-compact { right: 40px; }
+#hline { position: absolute; left: 12px; right: 12px; top: 46px; height: 1px; decorator: horizontal-gradient(#ffc87000 #ffc870a0); pointer-events: none; }
+
+/* ---------- tabs + own cost ---------- */
+#tabs { position: absolute; left: 12px; top: 54px; width: 150px; height: 26px; border-radius: 9px; background-color: #ffffff08; border: 1px #ffffff12; }
+.tab { box-sizing: border-box; position: relative; float: left; width: 50%; height: 24px; line-height: 23px; text-align: center; border-radius: 8px; font-size: 12px; font-weight: bold; color: #b8ae9c; }
+.tab:hover { color: #ffffff; }
+.tab.sel { color: #fff4e4; decorator: vertical-gradient(#c8803a #7a4618); border: 1px #ffd8a070; }
+#cost { position: absolute; right: 12px; top: 52px; width: 186px; height: 30px; line-height: 15px; overflow: hidden; text-align: right; font-size: 10px; color: #8f8878; pointer-events: none; }
+#cost b { color: #c8bca8; font-weight: normal; }
+
+/* ---------- stats page ---------- */
+#statp { position: absolute; left: 12px; right: 12px; top: 88px; bottom: 10px; }
+body.set #statp { display: none; }
+.tile { position: absolute; border-radius: 11px; background-color: #18141c; decorator: vertical-gradient(#ffd8a00e #ffffff02); border: 1px #ffffff14; pointer-events: none; }
+.tk { position: absolute; left: 10px; top: 4px; height: 13px; line-height: 13px; font-size: 9.5px; font-weight: bold; color: #a09682; letter-spacing: 0.5px; white-space: nowrap; }
+.tv { position: absolute; left: 10px; right: 6px; top: 17px; height: 19px; line-height: 19px; overflow: hidden; font-size: 17px; font-weight: bold; color: #fff4e4; white-space: nowrap; }
+.tv.good { color: #6fe39a; } .tv.ok { color: #ffc35a; } .tv.bad { color: #ff6a5a; }
+.tu { font-size: 10px; font-weight: normal; color: #8f8878; }
+.td { position: absolute; left: 10px; right: 8px; bottom: 4px; height: 13px; line-height: 13px; font-size: 10px; color: #8f8878; white-space: nowrap; overflow: hidden; }
+
+#hero { left: 0px; top: 0px; width: 140px; height: 116px; }
+#hero.good { border-color: #6fe39a70; decorator: vertical-gradient(#6fe39a22 #6fe39a04); }
+#hero.ok { border-color: #ffc35a70; decorator: vertical-gradient(#ffc35a22 #ffc35a04); }
+#hero.bad { border-color: #ff6a5a80; decorator: vertical-gradient(#ff6a5a26 #ff6a5a04); }
+#fps { position: absolute; left: 6px; top: 8px; width: 90px; text-align: right; font-size: 44px; line-height: 52px; font-weight: bold; color: #fff4e4; }
+#fps.good { color: #6fe39a; } #fps.ok { color: #ffc35a; } #fps.bad { color: #ff6a5a; }
+#fpsu { position: absolute; left: 100px; top: 32px; font-size: 11px; font-weight: bold; color: #8f8878; }
+#grade { position: absolute; left: 8px; top: 64px; right: 8px; height: 16px; line-height: 16px; text-align: center; font-size: 11px; font-weight: bold; color: #8f8878; }
+#grade.good { color: #6fe39a; } #grade.ok { color: #ffc35a; } #grade.bad { color: #ff6a5a; }
+#ms { position: absolute; left: 6px; right: 6px; bottom: 8px; height: 15px; line-height: 15px; overflow: hidden; text-align: center; font-size: 11px; color: #c8bca8; }
+
+#t_l1 { left: 146px; top: 0px; width: 92px; height: 56px; }
+#t_l01 { left: 244px; top: 0px; width: 92px; height: 56px; }
+#t_avg { left: 146px; top: 60px; width: 92px; height: 56px; }
+#t_wst { left: 244px; top: 60px; width: 92px; height: 56px; }
+.tile, .row, .tab, .ib, .sa, #tabs, .sw { box-sizing: border-box; }
+
+#gtile { left: 0px; top: 124px; width: 336px; height: 100px; }
+#gmm { position: absolute; right: 10px; top: 5px; height: 13px; line-height: 13px; font-size: 9.5px; color: #8f8878; white-space: nowrap; }
+#graph { box-sizing: border-box; position: absolute; left: 7px; top: 23px; width: 322px; height: 68px; border-radius: 6px; background-color: #0a090c; border: 1px #ffffff10; }
+.gb { position: absolute; bottom: 0px; width: 3px; height: 1px; background-color: #4a4458; }
+.gb.good { decorator: vertical-gradient(#8ff0b4 #1d6a40); }
+.gb.ok { decorator: vertical-gradient(#ffd890 #7a5410); }
+.gb.bad { decorator: vertical-gradient(#ff9a8a #7a1a10); }
+.gl { position: absolute; left: 0px; right: 0px; height: 1px; }
+#gl_good { background-color: #6fe39a40; } #gl_ok { background-color: #ffc35a40; }
+.glab { position: absolute; right: 3px; font-size: 9px; }
+#glab_good { color: #6fe39ab0; } #glab_ok { color: #ffc35ab0; }
+#gcur { position: absolute; top: 0px; bottom: 0px; width: 3px; background-color: #ffffff28; }
+#graph * { pointer-events: none; }
+
+#t_cpu { left: 0px; top: 232px; width: 108px; height: 62px; }
+#t_gpu { left: 114px; top: 232px; width: 108px; height: 62px; }
+#t_vram { left: 228px; top: 232px; width: 108px; height: 62px; }
+#t_cpu .td, #t_gpu .td, #t_vram .td { bottom: 6px; }
+#t_cpu .tv, #t_gpu .tv, #t_vram .tv { font-size: 15px; }
+.tk .tu { font-size: 8.5px; letter-spacing: 0px; color: #6a6478; }
+#htile { left: 0px; top: 302px; width: 336px; height: 100px; }
+#hmm { position: absolute; right: 10px; top: 5px; height: 13px; line-height: 13px; font-size: 9.5px; color: #8f8878; white-space: nowrap; }
+#hgraph { box-sizing: border-box; position: absolute; left: 7px; top: 23px; width: 322px; height: 68px; border-radius: 6px; background-color: #0a090c; border: 1px #ffffff10; }
+#hgraph * { pointer-events: none; }
+.hlab { position: absolute; left: 4px; font-size: 9px; font-weight: bold; color: #c8bca8c0; font-effect: outline(1px #000000c0); }
+#hlab_c { top: 1px; } #hlab_g { bottom: 1px; }
+#hnote { display: none; position: absolute; left: 0px; right: 0px; top: 26px; text-align: center; font-size: 10px; color: #6a6478; }
+#htile.novz #hnote { display: block; }
+#htile.novz canvas, #htile.novz .hlab { display: none; }
+canvas { display: block; position: absolute; left: 0px; top: 0px; width: 320px; height: 66px; }
+#vfps { display: none; }
+body.viz #vfps { display: block; }
+body.viz #graph .gb, body.viz #gcur { display: none; }
+body.viz .glab { font-effect: outline(1px #000000c0); }
+body.viz #glab_ok { right: auto; left: 3px; }   /* auto-range can put the two lines close together */
+#t_mem { left: 0px; top: 410px; width: 108px; height: 62px; }
+#t_zone { left: 114px; top: 410px; width: 108px; height: 62px; }
+#t_ui { left: 228px; top: 410px; width: 108px; height: 62px; }
+#t_mem .tv, #t_zone .tv, #t_ui .tv { font-size: 13px; right: 6px; overflow: hidden; }
+#t_mem .td, #t_zone .td, #t_ui .td { bottom: 6px; }
+
+#scr { left: 0px; top: 480px; width: 336px; height: 70px; }
+.sc { position: absolute; width: 154px; height: 15px; line-height: 15px; font-size: 11px; white-space: nowrap; overflow: hidden; color: #ece4d6; }
+.sc.empty { display: none; }
+.sd { display: inline-block; width: 7px; height: 7px; border-radius: 4px; margin-right: 6px; background-color: #6a6478; }
+.sc.run .sd { background-color: #6fe39a; } .sc.pause .sd { background-color: #ffc35a; }
+.sc .sp { color: #6a6478; font-size: 9.5px; }
+#scmore { position: absolute; right: 10px; top: 5px; height: 13px; line-height: 13px; font-size: 9.5px; color: #8f8878; }
+
+#ab { left: 0px; top: 558px; width: 336px; height: 56px; pointer-events: auto; }
+#hint { position: absolute; left: 10px; top: 6px; right: 10px; height: 15px; line-height: 15px; font-size: 10.5px; color: #ffd8a0; white-space: nowrap; overflow: hidden; pointer-events: none; }
+#hint.idle { color: #8f8878; }
+.btn { display: inline-block; height: 20px; line-height: 20px; padding: 0px 10px; margin-right: 6px; border-radius: 7px; font-size: 11px; font-weight: bold; color: #e8dcc8; background-color: #ffffff0a; border: 1px #ffffff1c; }
+.btn:hover { background-color: #f0b06030; border-color: #ffd8a090; color: #ffffff; }
+.btn.on { decorator: vertical-gradient(#c8803a #7a4618); border-color: #ffd8a070; }
+.btn.red:hover { background-color: #a0303060; border-color: #ff8a8aa0; }
+.btn.rec { color: #ffffff; decorator: vertical-gradient(#c83a3a #6a1818); border-color: #ff8a8aa0; }
+#abb { position: absolute; left: 10px; bottom: 7px; height: 22px; white-space: nowrap; }
+
+/* ---------- settings page ---------- */
+#setp { display: none; position: absolute; left: 12px; right: 12px; top: 88px; bottom: 10px; }
+body.set #setp { display: block; }
+.row { position: relative; height: 44px; margin-bottom: 6px; border-radius: 10px; background-color: #18141c; border: 1px #ffffff12; }
+.row.click:hover { border-color: #ffd8a070; background-color: #201a24; }
+.rl { position: absolute; left: 12px; top: 5px; height: 17px; line-height: 17px; font-size: 12px; font-weight: bold; color: #fff4e4; }
+.rd { position: absolute; left: 12px; top: 23px; height: 14px; line-height: 14px; overflow: hidden; right: 62px; font-size: 10px; color: #8f8878; white-space: nowrap; overflow: hidden; }
+.row.wide .rd { right: 12px; }
+.sw { position: absolute; right: 12px; top: 11px; width: 38px; height: 20px; border-radius: 10px; background-color: #221e28; border: 1px #ffffff22; }
+.sw .kn { position: absolute; left: 2px; top: 2px; width: 14px; height: 14px; border-radius: 7px; decorator: vertical-gradient(#d8d2c6 #8a8070); }
+.sw.on { decorator: horizontal-gradient(#1a5a3a #2ea868); border-color: #6fe39a90; }
+.sw.on .kn { left: 20px; decorator: vertical-gradient(#ffffff #cfe8d8); }
+.row.tall { height: 62px; }
+.row.tall2 { height: 84px; }
+.row.tall2 .chips { white-space: normal; height: 48px; }
+.row.tall2 .chip { margin-bottom: 4px; }
+.chips { position: absolute; left: 10px; right: 10px; top: 32px; height: 22px; white-space: nowrap; }
+.chip { display: inline-block; height: 20px; line-height: 19px; padding: 0px 8px; margin-right: 4px; border-radius: 7px; font-size: 10.5px; font-weight: bold; color: #c8bca8; background-color: #ffffff08; border: 1px #ffffff14; }
+.chip:hover { color: #ffffff; border-color: #ffd8a090; }
+.chip.sel { color: #fff4e4; decorator: vertical-gradient(#c8803a #7a4618); border-color: #ffd8a070; }
+.stp { position: absolute; right: 10px; top: 10px; height: 22px; white-space: nowrap; }
+.sa { display: inline-block; width: 22px; height: 22px; line-height: 20px; text-align: center; border-radius: 7px; font-size: 14px; font-weight: bold; color: #c8bca8; background-color: #ffffff08; border: 1px #ffffff14; vertical-align: top; }
+.sa:hover { color: #ffffff; border-color: #ffd8a090; background-color: #f0b06030; }
+.sa.dis { color: #3a3540; border-color: #ffffff08; }
+.sv { display: inline-block; width: 86px; height: 22px; line-height: 21px; text-align: center; font-size: 11px; font-weight: bold; vertical-align: top; }
+.sv .good, .sv .ok { font-weight: bold; }
+#sbtns { position: absolute; left: 0px; right: 0px; bottom: 22px; white-space: nowrap; }
+#snote { position: absolute; left: 2px; right: 0px; bottom: 2px; font-size: 9.5px; color: #6a6478; pointer-events: none; }
+
+/* ---------- compact pill ---------- */
+#cbox { display: none; position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
+body.compact #cbox { display: block; }
+body.compact #hd, body.compact #hline, body.compact #tabs, body.compact #cost, body.compact #statp, body.compact #setp { display: none; }
+body.compact #bg { border-radius: 12px; }
+#cfps { position: absolute; left: 10px; top: 2px; width: 46px; text-align: right; font-size: 26px; line-height: 36px; font-weight: bold; color: #fff4e4; pointer-events: none; }
+#cfps.good { color: #6fe39a; } #cfps.ok { color: #ffc35a; } #cfps.bad { color: #ff6a5a; }
+#cu { position: absolute; left: 60px; top: 17px; font-size: 9.5px; font-weight: bold; color: #8f8878; pointer-events: none; }
+#cms { position: absolute; left: 86px; top: 4px; height: 15px; line-height: 15px; font-size: 11px; color: #c8bca8; pointer-events: none; white-space: nowrap; }
+#cl1 { position: absolute; left: 86px; top: 20px; height: 14px; line-height: 14px; font-size: 10px; color: #8f8878; pointer-events: none; white-space: nowrap; }
+#a-expand { position: absolute; right: 6px; top: 8px; width: 22px; height: 22px; line-height: 20px; font-size: 13px; }
+
+.tab *, .btn *, .chip *, .row *, .sa *, .ib * { pointer-events: none; }
+.row .sa, .row .chip { pointer-events: auto; }
+
+/* ---------- see-through (generated) ---------- */
+body.mode-clear .ib, body.mode-hover .ib { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .ib:hover, body.mode-hover .ib:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #a-x:hover, body.mode-hover #a-x:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #hline, body.mode-hover #hline { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #tabs, body.mode-hover #tabs { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .tab, body.mode-hover .tab { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .tab.sel, body.mode-hover .tab.sel { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .tile, body.mode-hover .tile { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #hero.good, body.mode-hover #hero.good { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #hero.ok, body.mode-hover #hero.ok { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #hero.bad, body.mode-hover #hero.bad { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #graph, body.mode-hover #graph { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #hgraph, body.mode-hover #hgraph { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .btn.rec, body.mode-hover .btn.rec { background-color: transparent; decorator: none; border-width: 0px; color: #ff6a5a; }
+body.mode-clear #gl_good, body.mode-hover #gl_good { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #gl_ok, body.mode-hover #gl_ok { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear #gcur, body.mode-hover #gcur { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .btn, body.mode-hover .btn { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .btn:hover, body.mode-hover .btn:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .btn.on, body.mode-hover .btn.on { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .btn.red:hover, body.mode-hover .btn.red:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .row, body.mode-hover .row { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .row.click:hover, body.mode-hover .row.click:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .chip, body.mode-hover .chip { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .chip:hover, body.mode-hover .chip:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .chip.sel, body.mode-hover .chip.sel { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .sa, body.mode-hover .sa { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .sa:hover, body.mode-hover .sa:hover { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-clear .sa.dis, body.mode-hover .sa.dis { background-color: transparent; decorator: none; border-width: 0px; }
+body.mode-hover:hover .ib { border-radius: 8px; background-color: #ffffff08; border: 1px #ffffff14; }
+body.mode-hover:hover .ib:hover { background-color: #f0b06030; border-color: #ffd8a090; }
+body.mode-hover:hover #a-x:hover { background-color: #a0303060; border-color: #ff8a8aa0; }
+body.mode-hover:hover #hline { decorator: horizontal-gradient(#ffc87000 #ffc870a0); }
+body.mode-hover:hover #tabs { border-radius: 9px; background-color: #ffffff08; border: 1px #ffffff12; }
+body.mode-hover:hover .tab { border-radius: 8px; }
+body.mode-hover:hover .tab.sel { decorator: vertical-gradient(#c8803a #7a4618); border: 1px #ffd8a070; }
+body.mode-hover:hover .tile { border-radius: 11px; background-color: #18141c; decorator: vertical-gradient(#ffd8a00e #ffffff02); border: 1px #ffffff14; }
+body.mode-hover:hover #hero.good { border-color: #6fe39a70; decorator: vertical-gradient(#6fe39a22 #6fe39a04); }
+body.mode-hover:hover #hero.ok { border-color: #ffc35a70; decorator: vertical-gradient(#ffc35a22 #ffc35a04); }
+body.mode-hover:hover #hero.bad { border-color: #ff6a5a80; decorator: vertical-gradient(#ff6a5a26 #ff6a5a04); }
+body.mode-hover:hover #graph { border-radius: 6px; background-color: #0a090c; border: 1px #ffffff10; }
+body.mode-hover:hover #hgraph { border-radius: 6px; background-color: #0a090c; border: 1px #ffffff10; }
+body.mode-hover:hover .btn.rec { decorator: vertical-gradient(#c83a3a #6a1818); border-color: #ff8a8aa0; color: #ffffff; }
+body.mode-hover:hover #gl_good { background-color: #6fe39a40; }
+body.mode-hover:hover #gl_ok { background-color: #ffc35a40; }
+body.mode-hover:hover #gcur { background-color: #ffffff28; }
+body.mode-hover:hover .btn { border-radius: 7px; background-color: #ffffff0a; border: 1px #ffffff1c; }
+body.mode-hover:hover .btn:hover { background-color: #f0b06030; border-color: #ffd8a090; }
+body.mode-hover:hover .btn.on { decorator: vertical-gradient(#c8803a #7a4618); border-color: #ffd8a070; }
+body.mode-hover:hover .btn.red:hover { background-color: #a0303060; border-color: #ff8a8aa0; }
+body.mode-hover:hover .row { border-radius: 10px; background-color: #18141c; border: 1px #ffffff12; }
+body.mode-hover:hover .row.click:hover { border-color: #ffd8a070; background-color: #201a24; }
+body.mode-hover:hover .chip { border-radius: 7px; background-color: #ffffff08; border: 1px #ffffff14; }
+body.mode-hover:hover .chip:hover { border-color: #ffd8a090; }
+body.mode-hover:hover .chip.sel { decorator: vertical-gradient(#c8803a #7a4618); border-color: #ffd8a070; }
+body.mode-hover:hover .sa { border-radius: 7px; background-color: #ffffff08; border: 1px #ffffff14; }
+body.mode-hover:hover .sa:hover { border-color: #ffd8a090; background-color: #f0b06030; }
+body.mode-hover:hover .sa.dis { border-color: #ffffff08; }
+body.mode-clear #graph *, body.mode-hover #graph .gl { background-color: transparent; }
+body.mode-hover:hover #graph .gl { background-color: #ffffff22; }
+body.mode-clear #hline, body.mode-hover #hline { decorator: none; }

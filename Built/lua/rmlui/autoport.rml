@@ -1,0 +1,14 @@
+<rml>
+<head>
+	<title>Window</title>
+	<link type="text/template" href="theme/window.rml"/>
+	<link type="text/rcss" href="theme/tool.rcss"/>
+</head>
+<body template="window">
+	<div id="title" class="stat">ImGui</div>
+	<div id="hint" class="hint">Auto-ported from ImGui</div>
+	<div id="binds" class="grid"></div>
+	<div id="body" class="list"></div>
+	<div id="status" class="status"></div>
+</body>
+</rml>

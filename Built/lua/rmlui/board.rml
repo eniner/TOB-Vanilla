@@ -1,0 +1,14 @@
+<rml>
+<head>
+	<title>Tool</title>
+	<link type="text/template" href="theme/window.rml"/>
+	<link type="text/rcss" href="theme/tool.rcss"/>
+</head>
+<body template="window">
+	<div id="title" class="stat">Tool</div>
+	<div id="hint" class="hint"></div>
+	<div id="buttons" class="grid"></div>
+	<div id="body" class="list"></div>
+	<div id="status" class="status"></div>
+</body>
+</rml>

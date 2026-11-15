@@ -1,0 +1,375 @@
+<rml>
+<head>
+	<title>RmlUi Pro Showcase</title>
+	<link type="text/template" href="../rmlui/theme/window.rml"/>
+	<link type="text/rcss" href="demo.rcss"/>
+</head>
+<body template="window">
+<div id="shell" class="shell skin-midnight">
+
+	<div class="side">
+		<div class="brand"><div class="brand-title">RmlUi Pro</div></div>
+		<div id="nav1" class="nav on" action="page:1">Combat HUD</div>
+		<div id="nav2" class="nav" action="page:2">Motion</div>
+		<div id="nav3" class="nav" action="page:3">3D transforms</div>
+		<div id="nav4" class="nav" action="page:4">Gradients</div>
+		<div id="nav5" class="nav" action="page:5">Effects</div>
+		<div id="nav6" class="nav" action="page:6">Glow and text</div>
+		<div id="nav7" class="nav" action="page:7">Clipping</div>
+		<div id="nav8" class="nav" action="page:8">Sprites</div>
+		<div id="nav9" class="nav" action="page:9">Controls</div>
+		<div id="nav10" class="nav" action="page:10">Tabs and lists</div>
+		<div id="nav11" class="nav" action="page:11">Tooltips</div>
+		<div id="nav12" class="nav" action="page:12">Themes</div>
+		<div class="side-fill"></div>
+		<div class="side-foot"><span id="st_fps">--</span> fps</div>
+	</div>
+
+	<div class="main">
+
+	<div id="page1" class="page on">
+		<div class="hudtop"><div class="h1">Combat HUD</div><div class="spacer"></div><div id="sim_btn" class="btn simbtn on" action="sim:toggle">Combat sim</div></div>
+		<div id="hud" class="hud">
+			<div class="hudbg"><div class="gridlines"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+			<div id="hudin" class="hudin">
+				<div id="pf" class="frame">
+					<div class="portrait"><div id="pf_icon" class="pimg spr s0"></div></div>
+					<div class="fbody">
+						<div class="fname"><span id="pf_name">Tester</span></div>
+						<div id="hp" class="vb hp big "><div id="hp_tr" class="trail"></div><div id="hp_f" class="fill"><div class="gloss"></div></div><div id="hp_sh" class="shield"></div><div id="hp_hx" class="healfx"></div><div class="vtxt"><span>HP</span><span id="hp_t" class="r">100%</span></div></div>
+						<div id="mn" class="vb mn "><div id="mn_tr" class="trail"></div><div id="mn_f" class="fill"><div class="gloss"></div></div><div id="mn_sh" class="shield"></div><div id="mn_hx" class="healfx"></div><div class="vtxt"><span>Mana</span><span id="mn_t" class="r">100%</span></div></div>
+						<div id="en" class="vb en thin "><div id="en_tr" class="trail"></div><div id="en_f" class="fill"><div class="gloss"></div></div><div id="en_sh" class="shield"></div><div id="en_hx" class="healfx"></div><div class="vtxt"><span>End</span><span id="en_t" class="r">100%</span></div></div>
+					</div>
+					<div id="pf_lvl" class="plvl">70</div>
+				</div>
+				<div id="tf" class="frame">
+					<div id="tf_ring" class="tring con-red"><div class="tring-spin"></div><div id="tf_lvl" class="tring-in">68</div></div>
+					<div class="fbody">
+						<div class="fname"><span id="tf_name">No target</span></div>
+						<div id="thp" class="vb thp big "><div id="thp_tr" class="trail"></div><div id="thp_f" class="fill"><div class="gloss"></div></div><div id="thp_sh" class="shield"></div><div id="thp_hx" class="healfx"></div><div class="vtxt"><span></span><span id="thp_t" class="r">100%</span></div></div>
+						<div id="tc" class="tcast"><div id="tc_f" class="tcast-fill"></div><div id="tc_n" class="tcast-n"></div></div>
+					</div>
+				</div>
+				<div class="cbwrap"><div id="cb" class="cb idle"><div class="cbclip"><div id="cb_f" class="cbfill"></div></div><div id="cb_sp" class="spark"></div><div id="cb_n" class="cbname"></div><div id="cb_t" class="cbtime"></div></div></div>
+				<div id="buffs" class="buffbar"></div>
+				<div class="dps"><div><span id="dps_n" class="dpsn">0</span> <span class="dpsu">dps</span></div><div id="combo" class="combo">x0</div><div class="spark-row"><div id="sp1" class="sp"></div><div id="sp2" class="sp"></div><div id="sp3" class="sp"></div><div id="sp4" class="sp"></div><div id="sp5" class="sp"></div><div id="sp6" class="sp"></div><div id="sp7" class="sp"></div><div id="sp8" class="sp"></div><div id="sp9" class="sp"></div><div id="sp10" class="sp"></div><div id="sp11" class="sp"></div><div id="sp12" class="sp"></div><div id="sp13" class="sp"></div><div id="sp14" class="sp"></div><div id="sp15" class="sp"></div><div id="sp16" class="sp"></div><div id="sp17" class="sp"></div><div id="sp18" class="sp"></div><div id="sp19" class="sp"></div><div id="sp20" class="sp last"></div></div></div>
+				<div id="banner" class="banner"></div>
+				<div class="abar"><div id="ab1" class="ab" action="ab:1"><div id="abi1" class="abi spr sgem g-evocation"><span>I</span></div><div class="abclip"><div id="abcd1" class="abcd"></div><div id="abs1" class="shine"></div></div><div id="abt1" class="abt"></div><div class="abk">1</div></div><div id="ab2" class="ab" action="ab:2"><div id="abi2" class="abi spr sgem g-alteration"><span>C</span></div><div class="abclip"><div id="abcd2" class="abcd"></div><div id="abs2" class="shine"></div></div><div id="abt2" class="abt"></div><div class="abk">2</div></div><div id="ab3" class="ab" action="ab:3"><div id="abi3" class="abi spr sgem g-abjuration"><span>S</span></div><div class="abclip"><div id="abcd3" class="abcd"></div><div id="abs3" class="shine"></div></div><div id="abt3" class="abt"></div><div class="abk">3</div></div><div id="ab4" class="ab" action="ab:4"><div id="abi4" class="abi spr sgem g-evocation"><span>F</span></div><div class="abclip"><div id="abcd4" class="abcd"></div><div id="abs4" class="shine"></div></div><div id="abt4" class="abt"></div><div class="abk">4</div></div><div id="ab5" class="ab" action="ab:5"><div id="abi5" class="abi spr sgem g-abjuration"><span>W</span></div><div class="abclip"><div id="abcd5" class="abcd"></div><div id="abs5" class="shine"></div></div><div id="abt5" class="abt"></div><div class="abk">5</div></div><div id="ab6" class="ab" action="ab:6"><div id="abi6" class="abi spr sgem g-evocation"><span>S</span></div><div class="abclip"><div id="abcd6" class="abcd"></div><div id="abs6" class="shine"></div></div><div id="abt6" class="abt"></div><div class="abk">6</div></div><div id="ab7" class="ab" action="ab:7"><div id="abi7" class="abi spr sgem g-alteration"><span>G</span></div><div class="abclip"><div id="abcd7" class="abcd"></div><div id="abs7" class="shine"></div></div><div id="abt7" class="abt"></div><div class="abk">7</div></div><div id="ab8" class="ab" action="ab:8"><div id="abi8" class="abi spr sgem g-alteration"><span>R</span></div><div class="abclip"><div id="abcd8" class="abcd"></div><div id="abs8" class="shine"></div></div><div id="abt8" class="abt"></div><div class="abk">8</div></div></div>
+				<div class="xpstrip"><div id="xp_f" class="xpfill"></div><div class="xpticks"></div></div>
+				<div id="fct" class="fctarena"><div id="fct1" class="fct"></div><div id="fct2" class="fct"></div><div id="fct3" class="fct"></div><div id="fct4" class="fct"></div><div id="fct5" class="fct"></div><div id="fct6" class="fct"></div><div id="fct7" class="fct"></div><div id="fct8" class="fct"></div><div id="fct9" class="fct"></div><div id="fct10" class="fct"></div><div id="fct11" class="fct"></div><div id="fct12" class="fct"></div></div>
+			</div>
+			<div id="vig" class="vig"></div>
+			<div id="flash" class="flash"></div>
+		</div>
+	</div>
+
+	<div id="page2" class="page">
+		<div class="h1">Motion</div>
+		<div id="mo_stage" class="mo-stage sc-frost">
+			<div id="mo_world" class="mo-world">
+				<div class="mo-sky"></div><div class="mo-moon"></div>
+				<div class="mo-floor"></div><div class="mo-runes"></div>
+				<div class="mo-caster"><div class="mo-shadow"></div><div class="mo-robe"></div><div class="mo-hood"></div><div class="mo-staff"><div class="mo-gem"></div></div></div>
+				<div class="mo-charge"><div class="mo-ring r1"></div><div class="mo-ring r2"></div><div class="mo-mote m1"></div><div class="mo-mote m2"></div><div class="mo-mote m3"></div><div class="mo-core"></div></div>
+				<div class="mo-bolt"><div class="mo-trail"></div><div class="mo-orb"></div></div>
+				<div class="mo-target"><div class="mo-shadow"></div><div id="mo_dummy" class="mo-dummy"><div class="mo-eye e1"></div><div class="mo-eye e2"></div></div></div>
+				<div class="mo-burst"><div class="mo-shock sh1"></div><div class="mo-shock sh2"></div><div class="mo-core2"></div>
+					<div class="mo-spk k1"></div><div class="mo-spk k2"></div><div class="mo-spk k3"></div><div class="mo-spk k4"></div><div class="mo-spk k5"></div><div class="mo-spk k6"></div></div>
+				<div id="mo_dmg" class="mo-dmg">2481</div>
+			</div>
+			<div class="mo-flash"></div>
+			<div class="mo-hud">
+				<div class="mo-cast"><div class="mo-cbf"></div><div id="mo_spell" class="mo-cbt">Ice Comet</div></div>
+			</div>
+		</div>
+		<div class="mo-ctl">
+			<div id="mo_s1" class="mo-sch" action="mo:frost"><div class="mo-dotc frost"></div><span>Frost</span></div>
+			<div id="mo_s2" class="mo-sch" action="mo:fire"><div class="mo-dotc fire"></div><span>Fire</span></div>
+			<div id="mo_s3" class="mo-sch" action="mo:shadow"><div class="mo-dotc shadow"></div><span>Shadow</span></div>
+			<div class="mo-sp"></div>
+			<div id="mo_auto" class="btn" action="mo:auto"><span>Auto</span></div>
+			<div class="btn primary" action="mo:cast"><span>Cast</span></div>
+		</div>
+	</div>
+
+	<div id="page3" class="page">
+		<div class="h1">3D transforms</div>
+		<div id="dk" class="dk-stage carousel">
+			<div class="dk-glow"></div>
+			<div class="dk-persp">
+				<div id="dkc1" class="dkc p0" action="dk:1"><div id="dki1" class="dk-in"><div class="dk-face dk-front dk-fire"><div class="dk-cost">12</div><div class="dk-art"><div id="dkico1" class="spr dk-ico sgem g-evocation"><span>I</span></div></div><div class="dk-name">Inferno Lance</div><div class="dk-type">Evocation</div><div class="dk-stat"><span>1840</span><span>3.0s</span></div></div><div class="dk-face dk-back"><div class="dk-sig"></div><div class="dk-desc">Hurls a lance of fire that pierces the first two foes.</div></div></div></div>
+				<div id="dkc2" class="dkc pp1" action="dk:2"><div id="dki2" class="dk-in"><div class="dk-face dk-front dk-frost"><div class="dk-cost">8</div><div class="dk-art"><div id="dkico2" class="spr dk-ico sgem g-abjuration"><span>G</span></div></div><div class="dk-name">Glacial Ward</div><div class="dk-type">Abjuration</div><div class="dk-stat"><span>900</span><span>1.5s</span></div></div><div class="dk-face dk-back"><div class="dk-sig"></div><div class="dk-desc">Absorbs damage and chills attackers.</div></div></div></div>
+				<div id="dkc3" class="dkc pp2" action="dk:3"><div id="dki3" class="dk-in"><div class="dk-face dk-front dk-nature"><div class="dk-cost">6</div><div class="dk-art"><div id="dkico3" class="spr dk-ico sgem g-alteration"><span>S</span></div></div><div class="dk-name">Spirit Bloom</div><div class="dk-type">Alteration</div><div class="dk-stat"><span>2200</span><span>2.5s</span></div></div><div class="dk-face dk-back"><div class="dk-sig"></div><div class="dk-desc">Heals the group over twelve seconds.</div></div></div></div>
+				<div id="dkc4" class="dkc pm2" action="dk:4"><div id="dki4" class="dk-in"><div class="dk-face dk-front dk-shadow"><div class="dk-cost">10</div><div class="dk-art"><div id="dkico4" class="spr dk-ico sgem g-necromancy"><span>S</span></div></div><div class="dk-name">Soul Siphon</div><div class="dk-type">Necromancy</div><div class="dk-stat"><span>1320</span><span>2.0s</span></div></div><div class="dk-face dk-back"><div class="dk-sig"></div><div class="dk-desc">Drains life and returns half as mana.</div></div></div></div>
+				<div id="dkc5" class="dkc pm1" action="dk:5"><div id="dki5" class="dk-in"><div class="dk-face dk-front dk-gold"><div class="dk-cost">15</div><div class="dk-art"><div id="dkico5" class="spr dk-ico sgem g-divination"><span>D</span></div></div><div class="dk-name">Divine Aegis</div><div class="dk-type">Divination</div><div class="dk-stat"><span>--</span><span>Instant</span></div></div><div class="dk-face dk-back"><div class="dk-sig"></div><div class="dk-desc">Ten seconds of invulnerability.</div></div></div></div>
+			</div>
+		</div>
+		<div class="dk-ctl">
+			<div class="btn dk-arrow" action="dk:prev"><span>&lt;</span></div>
+			<div id="dk_m1" class="mo-sch on" action="dk:carousel"><span>Carousel</span></div>
+			<div id="dk_m2" class="mo-sch" action="dk:fan"><span>Fan</span></div>
+			<div class="btn primary" action="dk:flip"><span>Flip</span></div>
+			<div class="btn dk-arrow" action="dk:next"><span>&gt;</span></div>
+		</div>
+	</div>
+
+	<div id="page4" class="page">
+		<div class="h1">Gradients</div>
+		<div class="ls">
+			<div class="ls-sky"></div>
+			<div class="ls-rays"></div>
+			<div class="ls-aura"></div><div class="ls-aura2"></div>
+			<div class="ls-sun"></div>
+			<div class="ls-mtn m1"></div><div class="ls-mtn m2"></div><div class="ls-mtn m3"></div>
+			<div class="ls-haze"></div>
+			<div class="ls-title">NORRATH</div>
+			<div class="ls-sub">THE PLANES OF POWER</div>
+			<div class="ls-foot">
+				<div id="ls_tip" class="ls-tip">Bind your soul before venturing into the Plane of Fear.</div>
+				<div class="ls-load"><div id="ls_fill" class="ls-fill"><div class="ls-stripes"></div><div class="ls-head"></div></div></div>
+				<div id="ls_pct" class="ls-pct">0%</div>
+			</div>
+		</div>
+		<div id="sg_row" class="row"><div id="sg_btn" class="btn primary" action="grad:toggle">Show shader gradients</div></div>
+	</div>
+
+	<div id="page5" class="page">
+		<div class="h1">Effects</div>
+		<div class="fg">
+			<div class="fg-bg"></div>
+			<div class="fg-orb fo1"></div><div class="fg-orb fo2"></div><div class="fg-orb fo3"></div><div class="fg-orb fo4"></div>
+			<div class="fg-grid"></div>
+			<div class="fg-glass fg-inv">
+				<div class="fg-h"><span>Bags</span><span class="fg-n">14 / 16</span></div>
+				<div class="fg-slots">
+					<div class="fg-s r-legendary"><div class="spr s5 fg-i"></div></div><div class="fg-s r-epic"><div class="spr s3 fg-i"></div><div class="fg-q">2</div></div><div class="fg-s r-rare"><div class="spr s2 fg-i"></div></div><div class="fg-s"><div class="spr s7 fg-i"></div><div class="fg-q">20</div></div>
+					<div class="fg-s r-uncommon"><div class="spr s6 fg-i"></div></div><div class="fg-s"><div class="spr s1 fg-i"></div><div class="fg-q">5</div></div><div class="fg-s r-rare"><div class="spr s4 fg-i"></div></div><div class="fg-s"><div class="spr s0 fg-i"></div></div>
+					<div class="fg-s r-epic"><div class="spr s2 fg-i"></div></div><div class="fg-s"><div class="spr s6 fg-i"></div><div class="fg-q">12</div></div><div class="fg-s r-uncommon"><div class="spr s3 fg-i"></div></div><div class="fg-s"><div class="spr s5 fg-i"></div></div>
+					<div class="fg-s"><div class="spr s1 fg-i"></div></div><div class="fg-s r-rare"><div class="spr s7 fg-i"></div></div><div class="fg-s empty"></div><div class="fg-s empty"></div>
+				</div>
+				<div class="fg-coins"><span class="fg-c cpp">42</span><span class="fg-c cgp">318</span><span class="fg-c csp">7</span></div>
+			</div>
+			<div class="fg-glass fg-map">
+				<div class="fg-h"><span>Plane of Knowledge</span><span class="fg-n">-312, 88</span></div>
+				<div class="fg-mapin">
+					<div class="fg-terrain"></div><div class="fg-road"></div><div class="fg-road r2"></div>
+					<div class="fg-pin p1"></div><div class="fg-pin p2"></div><div class="fg-pin p3"></div>
+					<div class="fg-me"><div class="fg-ping"></div><div class="fg-arrow"></div></div>
+				</div>
+			</div>
+			<div id="party_host" class="fg-glass fg-party"></div>
+		</div>
+	</div>
+
+	<div id="page6" class="page">
+		<div class="h1">Glow and text</div>
+		<div class="gt-hero">
+			<div class="hero-t hero-glow">NORRATH</div>
+			<div class="hero-t hero-base">NORRATH</div>
+			<div class="hero-t hero-top">NORRATH</div>
+			<div class="hero-sub">Rise of the Planes</div>
+		</div>
+		<div class="gt-row">
+			<div class="card gtc dmgs"><span class="dn n1">1,284</span><span class="dn crit n2">4,902!</span><span class="dn heal n3">+2,150</span><span class="dn magic n4">731</span><span class="dn miss n5">MISS</span></div>
+			<div class="card gtc neonc"><div class="neon">OPEN</div><div class="neon2">TAVERN</div></div>
+		</div>
+		<div class="gt-row">
+			<div class="card gtc rarity">
+				<div class="rn c-common">Rusty Short Sword</div><div class="rn c-uncommon g-uncommon">Fine Steel Dagger</div><div class="rn c-rare g-rare">Ring of Embers</div>
+				<div class="rn c-epic g-epic">Wurmscale Greaves</div><div class="rn c-legendary g-legendary">Shield of the Ancients</div>
+			</div>
+			<div class="card gtc chat">
+				<div class="bub left"><div class="btail"></div><span class="who c-rare">Tester</span><span class="msg">LFG Plane of Fear, cleric here</span></div>
+				<div class="bub right"><div class="btail"></div><span class="who c-legendary">Firiona</span><span class="msg">Inc in 5, bring a rez stick</span></div>
+				<div class="bub left tell"><div class="btail"></div><span class="who c-epic">Guide</span><span class="msg">Welcome to Norrath!</span></div>
+			</div>
+		</div>
+		<div class="card gtc typer"><span id="tw_txt" class="twt"></span><span class="caret"></span></div>
+		<div class="boss"><div class="boss-in"><div class="boss-n">Lord Nagafen</div><div class="boss-s">Ancient Red Dragon</div><div class="boss-shine"></div></div></div>
+	</div>
+
+	<div id="page7" class="page">
+		<div class="h1">Clipping</div>
+		<div class="cl-row">
+			<div class="card clc"><div class="porthole"><div class="scene"><div class="sky"></div><div class="sun"></div><div class="clouds"><div class="cl1"></div><div class="cl2"></div><div class="cl3"></div></div><div class="hills"><div class="h1x"></div><div class="h2x"></div></div><div class="sea"></div><div class="boat spr s7"></div></div><div class="rivets"></div></div></div>
+			<div class="card clc"><div class="minimap"><div class="mm-rot"><div class="mm-grid"></div><div class="mm-dot d1"></div><div class="mm-dot d2"></div><div class="mm-dot d3"></div><div class="mm-dot d4 foe"></div><div class="mm-dot d5 foe"></div></div><div class="mm-sweep"></div><div class="mm-me"></div><div class="mm-n">N</div></div></div>
+			<div class="card clc"><div class="wipebox"><div class="wipe-under"><div class="spr s5 wbi"></div></div><div class="wipe-clip"><div class="wipe-over"><div class="spr s5 wbi"></div></div></div><div class="wipe-edge"></div></div></div>
+		</div>
+		<div class="marquee"><div class="mq-track"><span class="mq-i c-legendary">Firiona looted Shield of the Ancients</span><span class="mq-dot"></span><span class="mq-i">Raid: Lord Nagafen in 10 minutes</span><span class="mq-dot"></span><span class="mq-i c-rare">Tester reached level 70</span><span class="mq-dot"></span><span class="mq-i c-uncommon">Double XP weekend is live</span><span class="mq-dot"></span><span class="mq-i c-legendary">Firiona looted Shield of the Ancients</span><span class="mq-dot"></span><span class="mq-i">Raid: Lord Nagafen in 10 minutes</span></div></div>
+		<div class="cl-row">
+			<div class="card clc"><div class="nest1"><div class="nest2"><div class="nest3"><div class="nest-sc"></div></div></div></div></div>
+			<div class="card clc clw"><div class="cdrow">
+				<div class="cdi"><div class="spr sgem g-evocation"><span>F</span></div><div class="cdo k1"></div><div class="cdw k1"></div></div>
+				<div class="cdi"><div class="spr sgem g-alteration"><span>H</span></div><div class="cdo k2"></div><div class="cdw k2"></div></div>
+				<div class="cdi"><div class="spr sgem g-abjuration"><span>W</span></div><div class="cdo k3"></div><div class="cdw k3"></div></div>
+				<div class="cdi"><div class="spr sgem g-conjuration"><span>S</span></div><div class="cdo k4"></div><div class="cdw k4"></div></div>
+				<div class="cdi"><div class="spr sgem g-divination"><span>D</span></div><div class="cdo k5"></div><div class="cdw k5"></div></div>
+			</div></div>
+		</div>
+		<div class="clip-list" id="clip_list"></div>
+	</div>
+
+	<div id="page8" class="page">
+		<div class="h1">Sprites</div>
+		<div class="sp-row">
+			<div class="card spc"><div class="wall"><div class="wcell"><div class="spr s0 "></div></div><div class="wcell"><div class="spr s1 "></div></div><div class="wcell"><div class="spr s2 "></div></div><div class="wcell"><div class="spr s3 "></div></div><div class="wcell"><div class="spr s4 "></div></div><div class="wcell"><div class="spr s5 "></div></div><div class="wcell"><div class="spr s6 "></div></div><div class="wcell"><div class="spr s7 "></div></div><div class="wcell"><div class="spr s0 tint-red"></div></div><div class="wcell"><div class="spr s1 tint-green"></div></div><div class="wcell"><div class="spr s2 tint-blue"></div></div><div class="wcell"><div class="spr s3 tint-gold"></div></div><div class="wcell"><div class="spr s4 "></div></div><div class="wcell"><div class="spr s5 "></div></div><div class="wcell"><div class="spr s6 "></div></div><div class="wcell"><div class="spr s7 "></div></div></div><div id="eq_icons" class="wall eqw"></div></div>
+			<div class="card spc anims">
+				<div class="gemw"><div class="gemglow"></div><div id="anim_frame" class="gem spr s0"></div></div>
+				<div class="coinw"><div class="coin3d"><div class="coin-face"></div></div></div>
+				<div class="flipbook"></div>
+			</div>
+		</div>
+		<div class="sp-row">
+			<div class="card spc frames">
+				<div class="frm tiled-b fr-bronze"><div class="spr s5"></div></div>
+				<div class="frm nine fr-stone"><div class="spr s3"></div></div>
+				<div class="frm nine fr-gold"><div class="spr s2"></div></div>
+			</div>
+			<div class="card spc tints"><div class="spr s5 big"></div><div class="spr s5 big tint-red"></div><div class="spr s5 big tint-green"></div><div class="spr s5 big tint-blue"></div><div class="spr s5 big tint-gold"></div><div class="spr s5 big tint-shadow"></div></div>
+		</div>
+		<div class="card loot">
+			<div class="lootstage"><div id="chest" class="chest spr s7" action="loot:drop"></div><div id="drop" class="drop"><div class="dropbeam"></div><div id="drop_i" class="drop-i spr s5"></div><div class="spk1 sparkle"></div><div class="spk2 sparkle"></div><div class="spk3 sparkle"></div><div class="spk4 sparkle"></div><div class="spk5 sparkle"></div><div class="spk6 sparkle"></div></div><div id="drop_n" class="drop-n c-legendary"></div></div>
+			<div class="cb2 primary" action="loot:drop"><span>Loot</span></div>
+		</div>
+	</div>
+
+	<div id="page9" class="page ctl acc-blue">
+		<div class="h1">Controls</div>
+		<div class="cgrid">
+			<div class="card ccard">
+				<div class="crow"><span class="cl">Auto loot</span><div id="tg1" class="tg on" action="tg:1"><div class="knob"></div></div></div>
+				<div class="crow"><span class="cl">Nameplates</span><div id="tg2" class="tg tg-green" action="tg:2"><div class="knob"></div></div></div>
+				<div class="crow"><span class="cl">Combat music</span><div id="tg3" class="tg tg-gold on" action="tg:3"><div class="knob"></div></div></div>
+				<div class="crow"><span class="cl">PvP flag</span><div id="tg4" class="tg tg-red" action="tg:4"><div class="knob"></div></div></div>
+			</div>
+			<div class="card ccard">
+				<div class="cl">Role</div>
+				<div id="seg" class="seg sel2"><div class="segpill"></div><div id="seg1" class="segopt" action="seg:1">Tank</div><div id="seg2" class="segopt on" action="seg:2">Healer</div><div id="seg3" class="segopt" action="seg:3">DPS</div></div>
+				<div class="cl">Loot</div>
+				<div id="chips" class="chips"><div id="ch1" class="chip on" action="chip:1">Rares</div><div id="ch2" class="chip" action="chip:2">Coin</div><div id="ch3" class="chip on" action="chip:3">Tradeskill</div><div id="ch4" class="chip" action="chip:4">Quest</div><div id="ch5" class="chip" action="chip:5">Lore</div></div>
+			</div>
+			<div class="card ccard wide2">
+				<div class="crow"><span class="cl">Brightness</span><span class="spacer"></span></div>
+				<div class="slwrap"><input id="sl" class="range rg-grad" type="range" min="0" max="100" step="1" value="35"/><div id="sl_bub" class="bubble" style="left: 35%;"><span id="sl_val">35</span></div></div>
+				<div class="crow"><span class="cl">Detail</span><span class="spacer"></span><span id="st_val" class="cv">High</span></div>
+				<div class="slwrap"><input id="sl_st" class="range rg-step" type="range" min="0" max="4" step="1" value="3"/><div class="ticks"><div class="tk"></div><div class="tk"></div><div class="tk"></div><div class="tk"></div><div class="tk"></div></div></div>
+				<div class="crow vol"><div id="spk" class="spk" action="vol:mute"><div class="spk-b"></div><div class="spk-c"></div><div id="spk_w1" class="spk-w w1"></div><div id="spk_w2" class="spk-w w2"></div></div>
+					<input id="sl_vol" class="range rg-vol" type="range" min="0" max="100" step="1" value="70"/><span id="vol_val" class="cv">70</span></div>
+			</div>
+			<div class="card ccard">
+				<div class="knobrow">
+					<div id="kb_dec" class="kbtn" action="knob:-">-</div>
+					<div class="dial" action="knob:+"><div id="dial_arc" class="dial-arc"></div><div class="dial-face"><div id="dial_rot" class="dial-rot" style="transform: rotate(-27deg);"><div class="dial-dot"></div></div></div><div id="dial_v" class="dial-v">60</div></div>
+					<div id="kb_inc" class="kbtn" action="knob:+">+</div>
+				</div>
+				<div class="stepper"><div class="stb" action="step:-">-</div><div id="step_v" class="stv">35</div><div class="stb" action="step:+">+</div></div>
+			</div>
+			<div class="card ccard">
+				<div class="ringrow">
+					<div class="pring"><div id="ring_arc" class="pring-arc"></div><div class="pring-spin"></div><div class="pring-hole"><span id="ring_v">35%</span></div></div>
+					<div class="segbar-wrap"><div id="segbar" class="segbar"><div id="sb1" class="sb on"></div><div id="sb2" class="sb on"></div><div id="sb3" class="sb on"></div><div id="sb4" class="sb"></div><div id="sb5" class="sb"></div><div id="sb6" class="sb"></div><div id="sb7" class="sb"></div><div id="sb8" class="sb"></div><div id="sb9" class="sb"></div><div id="sb10" class="sb"></div></div>
+					<div class="charge"><div class="charge-f"></div></div></div>
+				</div>
+			</div>
+			<div class="card ccard">
+				<div id="ck1" class="ck on" action="ck:1"><div class="ckbox"><div class="ckmark"></div></div><span>Auto-accept trades</span></div>
+				<div id="ck2" class="ck" action="ck:2"><div class="ckbox"><div class="ckmark"></div></div><span>Hide helm</span></div>
+				<div id="ck3" class="ck on" action="ck:3"><div class="ckbox"><div class="ckmark"></div></div><span>Show damage numbers</span></div>
+			</div>
+			<div class="card ccard wide2">
+				<div class="rcards">
+					<div id="rc1" class="rcard on" action="rc:1"><div class="spr s5"></div><div class="rct">Warrior</div><div class="rcs">Plate</div></div>
+					<div id="rc2" class="rcard" action="rc:2"><div class="spr s0"></div><div class="rct">Cleric</div><div class="rcs">Plate</div></div>
+					<div id="rc3" class="rcard" action="rc:3"><div class="spr s3"></div><div class="rct">Wizard</div><div class="rcs">Cloth</div></div>
+				</div>
+			</div>
+			<div class="card ccard">
+				<div class="cl">Accent</div>
+				<div class="swatches"><div id="sw_blue" class="sw sw-blue on" action="acc:blue"></div><div id="sw_gold" class="sw sw-gold" action="acc:gold"></div><div id="sw_green" class="sw sw-green" action="acc:green"></div><div id="sw_pink" class="sw sw-pink" action="acc:pink"></div><div id="sw_red" class="sw sw-red" action="acc:red"></div></div>
+				<div class="cl">Keybind</div>
+				<div id="kbf" class="kbf" action="kb:capture"><span id="kbf_t">Shift + F</span></div>
+			</div>
+			<div class="card ccard">
+				<div class="field"><input id="tx" class="text tin" type="text" value="Tester"/><div class="clr" action="tx:clear">x</div></div>
+				<div class="field"><div class="mag"><div class="mag-c"></div><div class="mag-h"></div></div><input id="tx_s" class="text tin search" type="text" value=""/></div>
+				<div class="field"><input id="tx_p" class="text tin" type="password" value="hunter2"/></div>
+				<select id="sel" class="sel">
+					<option value="tank">Tank</option>
+					<option value="healer" selected="">Healer</option>
+					<option value="dps">DPS</option>
+				</select>
+			</div>
+			<div class="card ccard wide2">
+				<div class="btnrow">
+					<div class="cb2 primary" action="btn:press"><span>Accept</span></div>
+					<div class="cb2 ghost" action="btn:press"><span>Cancel</span></div>
+					<div class="cb2 danger" action="btn:press"><span>Destroy</span></div>
+					<div class="cb2 icon" action="btn:press"><div class="spr s2"></div></div>
+					<div id="ldbtn" class="cb2 primary ld" action="btn:load"><div class="ldspin"></div><span id="ld_t">Save</span></div>
+					<div class="cb2 shiny" action="btn:press"><div class="shn"></div><span>Epic</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="page10" class="page">
+		<div class="h1">Tabs and lists</div>
+		<div id="tabs" class="tabs t1"><div class="tabpill"></div><div id="tab1" class="tabb on" action="tab:1">Inventory</div><div id="tab2" class="tabb" action="tab:2">Spells</div><div id="tab3" class="tabb" action="tab:3">Quests</div></div>
+		<div id="tp1" class="tpanel on"><div id="bag" class="bag"></div></div>
+		<div id="tp2" class="tpanel">
+			<div class="shead"><div id="sh_name" class="shc sname sorted" action="sort:name">Spell<span id="arr_name" class="arr"></span></div><div id="sh_level" class="shc slvl" action="sort:level">Level<span id="arr_level" class="arr"></span></div><div id="sh_mana" class="shc smana" action="sort:mana">Mana<span id="arr_mana" class="arr"></span></div></div>
+			<div id="splist" class="splist"></div>
+		</div>
+		<div id="tp3" class="tpanel"><div id="q1" class="quest open"><div class="qhead" action="q:1"><div class="qchev"></div><span class="qt">The Gnoll Problem</span><span class="qpct">65%</span></div><div class="qbody"><div class="qdesc">Slay gnolls in Blackburrow.</div><div class="qstep"><span class="qsn">Gnoll pups slain</span><span class="qsv">7 / 10</span><div class="qbar"><div class="qfill" style="width: 70%;"></div></div></div><div class="qstep"><span class="qsn">Gnoll fangs</span><span class="qsv">3 / 5</span><div class="qbar"><div class="qfill" style="width: 60%;"></div></div></div></div></div><div id="q2" class="quest"><div class="qhead" action="q:2"><div class="qchev"></div><span class="qt">Lost Shipment</span><span class="qpct">50%</span></div><div class="qbody"><div class="qdesc">Recover the crates near the docks of Qeynos.</div><div class="qstep"><span class="qsn">Crates found</span><span class="qsv">2 / 4</span><div class="qbar"><div class="qfill" style="width: 50%;"></div></div></div></div></div><div id="q3" class="quest"><div class="qhead" action="q:3"><div class="qchev"></div><span class="qt">The Ancient Wurm</span><span class="qpct">50%</span></div><div class="qbody"><div class="qdesc">Gather a raid and defeat the wurm in its lair.</div><div class="qstep"><span class="qsn">Raid assembled</span><span class="qsv">6 / 6</span><div class="qbar"><div class="qfill" style="width: 100%;"></div></div></div><div class="qstep"><span class="qsn">Wurm slain</span><span class="qsv">0 / 1</span><div class="qbar"><div class="qfill" style="width: 0%;"></div></div></div></div></div></div>
+	</div>
+
+	<div id="page11" class="page">
+		<div class="h1">Tooltips</div>
+		<div class="tipstage">
+			<div class="tiprow inv"><div class="tipwrap tw-above"><div class="islot r-legendary"><div class="spr s5"></div></div>
+				<div class="ttip t-above"><div class="tarr"></div><div class="tth"><div class="tico r-legendary"><div class="spr s5"></div></div><div><div class="ttn c-legendary">Shield of the Ancients</div><div class="tts">Secondary · Shield</div></div></div>
+				<div class="tstats"><div class="tsr"><span>AC</span><span class="tsv">45</span></div><div class="tsr"><span>HP</span><span class="tsv">+250</span></div><div class="tsr"><span>Mana</span><span class="tsv">+150</span></div></div><div class="tres"><div class="rp fire"><div class="rpf" style="width: 80%;"></div></div><div class="rp cold"><div class="rpf" style="width: 60%;"></div></div><div class="rp magic"><div class="rpf" style="width: 40%;"></div></div></div><div class="tlore">Forged in the first age, it has never been broken.</div><div class="tprice"><span class="coin pp"></span><span>1,200 pp</span></div></div></div><div class="tipwrap tw-above"><div class="islot r-epic"><div class="spr s3"></div></div>
+				<div class="ttip t-above"><div class="tarr"></div><div class="tth"><div class="tico r-epic"><div class="spr s3"></div></div><div><div class="ttn c-epic">Wurmscale Greaves</div><div class="tts">Legs · Plate</div></div></div>
+				<div class="tstats"><div class="tsr"><span>AC</span><span class="tsv">32</span></div><div class="tsr"><span>HP</span><span class="tsv">+140</span></div><div class="tsr"><span>STA</span><span class="tsv">+12</span></div></div><div class="tres"><div class="rp fire"><div class="rpf" style="width: 40%;"></div></div><div class="rp poison"><div class="rpf" style="width: 70%;"></div></div></div><div class="tlore">Still warm to the touch.</div><div class="tprice"><span class="coin pp"></span><span>480 pp</span></div></div></div><div class="tipwrap tw-below"><div class="islot r-rare"><div class="spr s2"></div></div>
+				<div class="ttip t-below"><div class="tarr"></div><div class="tth"><div class="tico r-rare"><div class="spr s2"></div></div><div><div class="ttn c-rare">Ring of Embers</div><div class="tts">Finger · Jewelry</div></div></div>
+				<div class="tstats"><div class="tsr"><span>HP</span><span class="tsv">+60</span></div><div class="tsr"><span>Mana</span><span class="tsv">+90</span></div><div class="tsr"><span>WIS</span><span class="tsv">+8</span></div></div><div class="tres"><div class="rp fire"><div class="rpf" style="width: 90%;"></div></div></div><div class="tlore">A faint crackle when worn.</div><div class="tprice"><span class="coin pp"></span><span>150 pp</span></div></div></div><div class="tipwrap tw-below"><div class="islot r-uncommon"><div class="spr s6"></div></div>
+				<div class="ttip t-below"><div class="tarr"></div><div class="tth"><div class="tico r-uncommon"><div class="spr s6"></div></div><div><div class="ttn c-uncommon">Traveler's Boots</div><div class="tts">Feet · Leather</div></div></div>
+				<div class="tstats"><div class="tsr"><span>AC</span><span class="tsv">9</span></div><div class="tsr"><span>AGI</span><span class="tsv">+5</span></div></div><div class="tres"><div class="rp cold"><div class="rpf" style="width: 20%;"></div></div></div><div class="tlore">Worn but comfortable.</div><div class="tprice"><span class="coin pp"></span><span>12 pp</span></div></div></div><div class="tipwrap tw-above"><div class="islot r-common"><div class="spr s7"></div></div>
+				<div class="ttip t-above"><div class="tarr"></div><div class="tth"><div class="tico r-common"><div class="spr s7"></div></div><div><div class="ttn c-common">Old Trunk</div><div class="tts">Container · 10 slots</div></div></div>
+				<div class="tstats"><div class="tsr"><span>Weight</span><span class="tsv">4.0</span></div><div class="tsr"><span>Slots</span><span class="tsv">10</span></div></div><div class="tres"></div><div class="tlore">Smells like mothballs.</div><div class="tprice"><span class="coin pp"></span><span>2 pp</span></div></div></div></div>
+			<div class="tiprow abar2"><div class="tipwrap tw-right"><div class="abslot"><div id="tsa1" class="spr sgem g-evocation"><span>I</span></div></div>
+				<div class="ttip t-right spell"><div class="tarr"></div><div class="tth"><div class="tico sc-evocation"><div id="tsb1" class="spr sgem g-evocation"><span>I</span></div></div><div><div class="ttn c-spell">Ice Comet</div><div class="tts">Evocation</div></div></div>
+				<div class="tstats"><div class="tsr"><span>Cast</span><span class="tsv">2.8s</span></div><div class="tsr"><span>Mana</span><span class="tsv mana">255</span></div><div class="tsr"><span>Recast</span><span class="tsv">6.0s</span></div></div><div class="tlore">Strikes the target with a comet of ice for 1,560 cold damage.</div></div></div><div class="tipwrap tw-above"><div class="abslot"><div id="tsa2" class="spr sgem g-alteration"><span>C</span></div></div>
+				<div class="ttip t-above spell"><div class="tarr"></div><div class="tth"><div class="tico sc-alteration"><div id="tsb2" class="spr sgem g-alteration"><span>C</span></div></div><div><div class="ttn c-spell">Complete Heal</div><div class="tts">Alteration</div></div></div>
+				<div class="tstats"><div class="tsr"><span>Cast</span><span class="tsv">10.0s</span></div><div class="tsr"><span>Mana</span><span class="tsv mana">400</span></div><div class="tsr"><span>Recast</span><span class="tsv">2.25s</span></div></div><div class="tlore">Heals your target for 7,500 hit points.</div></div></div><div class="tipwrap tw-above"><div class="abslot"><div id="tsa3" class="spr sgem g-abjuration"><span>S</span></div></div>
+				<div class="ttip t-above spell"><div class="tarr"></div><div class="tth"><div class="tico sc-abjuration"><div id="tsb3" class="spr sgem g-abjuration"><span>S</span></div></div><div><div class="ttn c-spell">Shield of Words</div><div class="tts">Abjuration</div></div></div>
+				<div class="tstats"><div class="tsr"><span>Cast</span><span class="tsv">5.0s</span></div><div class="tsr"><span>Mana</span><span class="tsv mana">575</span></div><div class="tsr"><span>Recast</span><span class="tsv">2.25s</span></div></div><div class="tlore">Increases AC by 49 and HP by 1,350 for 90 minutes.</div></div></div><div class="tipwrap tw-above"><div class="abslot"><div id="tsa4" class="spr sgem g-evocation"><span>S</span></div></div>
+				<div class="ttip t-above spell"><div class="tarr"></div><div class="tth"><div class="tico sc-evocation"><div id="tsb4" class="spr sgem g-evocation"><span>S</span></div></div><div><div class="ttn c-spell">Stun</div><div class="tts">Evocation</div></div></div>
+				<div class="tstats"><div class="tsr"><span>Cast</span><span class="tsv">instant</span></div><div class="tsr"><span>Mana</span><span class="tsv mana">45</span></div><div class="tsr"><span>Recast</span><span class="tsv">12s</span></div></div><div class="tlore">Stuns the target for 6 seconds.</div></div></div></div>
+		</div>
+	</div>
+
+	<div id="page12" class="page">
+		<div class="h1">Themes</div>
+		<div class="lttiles"><div id="lt_classic" class="lttile tile-classic on" action="lt:classic"><div class="tp-a"></div><div class="tp-b"></div><div class="tp-c"></div><div class="tp-n">Classic</div></div><div id="lt_glass" class="lttile tile-glass" action="lt:glass"><div class="tp-a"></div><div class="tp-b"></div><div class="tp-c"></div><div class="tp-n">Glass HUD</div></div><div id="lt_raid" class="lttile tile-raid" action="lt:raid"><div class="tp-a"></div><div class="tp-b"></div><div class="tp-c"></div><div class="tp-n">Compact Raid</div></div><div id="lt_scifi" class="lttile tile-scifi" action="lt:scifi"><div class="tp-a"></div><div class="tp-b"></div><div class="tp-c"></div><div class="tp-n">Sci-fi</div></div><div id="lt_tome" class="lttile tile-tome" action="lt:tome"><div class="tp-a"></div><div class="tp-b"></div><div class="tp-c"></div><div class="tp-n">Tome</div></div></div>
+		<div id="ltstage" class="ltstage st-classic">
+			<div class="lt-orb lo1"></div><div class="lt-orb lo2"></div>
+			<div id="lt" class="lt lt-classic">
+				<div class="lt-cut c1"></div><div class="lt-cut c2"></div><div class="lt-line"></div>
+				<div class="lt-head"><div class="lt-por"><div class="spr s5"></div></div><div class="lt-id"><div class="lt-name">Tester</div><div class="lt-sub">Level 70 Warrior</div></div><div class="lt-gold">1,284 pp</div></div>
+				<div class="lt-body">
+					<div class="lt-side"><div class="lbar lhp"><div class="lbf" style="width: 86%;"></div><span class="lbt">HP</span><span class="lbv">86%</span></div><div class="lbar lmn"><div class="lbf" style="width: 54%;"></div><span class="lbt">Mana</span><span class="lbv">54%</span></div><div class="lbar len"><div class="lbf" style="width: 92%;"></div><span class="lbt">End</span><span class="lbv">92%</span></div>
+						<div class="lt-btns"><div class="lt-btn pri" action="lt:pulse">Equip</div><div class="lt-btn">Trade</div><div class="lt-btn">Inspect</div></div></div>
+					<div class="lt-main"><div class="lt-stats"><div class="lst"><span class="lsk">STR</span><span class="lsv">215</span></div><div class="lst"><span class="lsk">STA</span><span class="lsv">240</span></div><div class="lst"><span class="lsk">AGI</span><span class="lsv">180</span></div><div class="lst"><span class="lsk">DEX</span><span class="lsv">170</span></div><div class="lst"><span class="lsk">WIS</span><span class="lsv">95</span></div><div class="lst"><span class="lsk">INT</span><span class="lsv">80</span></div><div class="lst"><span class="lsk">AC</span><span class="lsv">1,450</span></div><div class="lst"><span class="lsk">ATK</span><span class="lsv">1,120</span></div></div><div class="lt-items"><div class="lit"><div class="spr s5"></div><span class="lin c-legendary">Shield of the Ancients</span><span class="liq"></span></div><div class="lit"><div class="spr s3"></div><span class="lin c-epic">Wurmscale Greaves</span><span class="liq"></span></div><div class="lit"><div class="spr s2"></div><span class="lin c-rare">Ring of Embers</span><span class="liq"></span></div><div class="lit"><div class="spr s6"></div><span class="lin c-uncommon">Healing Potion</span><span class="liq">x12</span></div></div></div>
+				</div>
+			</div>
+		</div>
+		<div class="ltfoot"><div class="skins"><div id="sk_midnight" class="skin-dot sd-midnight on" action="skin:midnight"></div><div id="sk_ember" class="skin-dot sd-ember" action="skin:ember"></div><div id="sk_forest" class="skin-dot sd-forest" action="skin:forest"></div><div id="sk_paper" class="skin-dot sd-paper" action="skin:paper"></div></div>
+			<div class="spacer"></div>
+			<div class="chromes"><div class="chip" action="chrome:redguides">redguides</div><div class="chip" action="chrome:azure">azure</div><div class="chip" action="chrome:violet">violet</div><div class="chip" action="chrome:ember">ember</div><div class="chip" action="chrome:jade">jade</div><div class="chip" action="chrome:rose">rose</div></div></div>
+	</div>
+
+	</div>
+</div>
+</body>
+</rml>

@@ -1,0 +1,126 @@
+ButtonMaster RML - credits
+==========================
+
+ButtonMaster RML is an RmlUi port of ButtonMaster v2.3 by Derple and Special.Ed.
+
+Game icons (4239 icons in img/gi/)
+---------------------------------
+Source: https://game-icons.net  (repository: https://github.com/game-icons/icons)
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0) - https://creativecommons.org/licenses/by/3.0/
+Changes: the SVGs were rasterized to 56x56 PNG white glyphs with a soft drop shadow, resized and centred. Category and search data come from the game-icons.net tags plus the icon names.
+
+Authors (icon count):
+  Delapouite (2022) - https://game-icons.net/  author folder 'delapouite'
+  Lorc (1429) - https://game-icons.net/  author folder 'lorc'
+  Skoll (172) - https://game-icons.net/  author folder 'skoll'
+  Caro Asercion (127) - https://game-icons.net/  author folder 'caro-asercion'
+  Viscious Speed (121) - https://game-icons.net/  author folder 'viscious-speed'
+  Sbed (95) - https://game-icons.net/  author folder 'sbed'
+  Badges (various) (59) - https://game-icons.net/  author folder 'badges'
+  Aussiesim (52) - https://game-icons.net/  author folder 'aussiesim'
+  Darkzaitzev (32) - https://game-icons.net/  author folder 'darkzaitzev'
+  Cathelineau (29) - https://game-icons.net/  author folder 'cathelineau'
+  Quoting (12) - https://game-icons.net/  author folder 'quoting'
+  Lord Berandas (10) - https://game-icons.net/  author folder 'lord-berandas'
+  Faithtoken (10) - https://game-icons.net/  author folder 'faithtoken'
+  Priorblue (7) - https://game-icons.net/  author folder 'priorblue'
+  Willdabeast (7) - https://game-icons.net/  author folder 'willdabeast'
+  Carl Olsen (6) - https://game-icons.net/  author folder 'carl-olsen'
+  Seregacthtuf (5) - https://game-icons.net/  author folder 'seregacthtuf'
+  Lucasms (5) - https://game-icons.net/  author folder 'lucasms'
+  Felbrigg (5) - https://game-icons.net/  author folder 'felbrigg'
+  Pierre Leducq (3) - https://game-icons.net/  author folder 'pierre-leducq'
+  Rihlsul (3) - https://game-icons.net/  author folder 'rihlsul'
+  Kier Heyl (3) - https://game-icons.net/  author folder 'kier-heyl'
+  John Redman (3) - https://game-icons.net/  author folder 'john-redman'
+  Guard13007 (3) - https://game-icons.net/  author folder 'guard13007'
+  Heavenly Dog (2) - https://game-icons.net/  author folder 'heavenly-dog'
+  Generalace135 (2) - https://game-icons.net/  author folder 'generalace135'
+  Zeromancer (2) - https://game-icons.net/  author folder 'zeromancer'
+  Various artists (2) - https://game-icons.net/  author folder 'various-artists'
+  Andymeneely (2) - https://game-icons.net/  author folder 'andymeneely'
+  Zajkonur (2) - https://game-icons.net/  author folder 'zajkonur'
+  Irongamer (1) - https://game-icons.net/  author folder 'irongamer'
+  Sparker (1) - https://game-icons.net/  author folder 'sparker'
+  Catsu (1) - https://game-icons.net/  author folder 'catsu'
+  Spencerdub (1) - https://game-icons.net/  author folder 'spencerdub'
+  Pepijn Poolman (1) - https://game-icons.net/  author folder 'pepijn-poolman'
+  John Colburn (1) - https://game-icons.net/  author folder 'john-colburn'
+  Starseeker (1) - https://game-icons.net/  author folder 'starseeker'
+
+Upstream license.txt:
+Icons provided under the Creative Commons 3.0 BY or CC0 if mentioned below.
+
+Each sub-folders in this archive correspond to a different contributor :
+
+- Lorc, http://lorcblog.blogspot.com
+- Delapouite, http://delapouite.com
+- John Colburn, http://ninmunanmu.com
+- Felbrigg, http://blackdogofdoom.blogspot.co.uk
+- John Redman, http://www.uniquedicetowers.com
+- Carl Olsen, https://twitter.com/unstoppableCarl
+- Sbed, http://opengameart.org/content/95-game-icons
+- PriorBlue
+- Willdabeast, http://wjbstories.blogspot.com
+- Viscious Speed, http://viscious-speed.deviantart.com - CC0
+- Lord Berandas, http://berandas.deviantart.com
+- Irongamer, http://ecesisllc.wix.com/home
+- HeavenlyDog, http://www.gnomosygoblins.blogspot.com
+- Lucas
+- Faithtoken, http://fungustoken.deviantart.com
+- Skoll
+- Andy Meneely, http://www.se.rit.edu/~andy/
+- Cathelineau
+- Kier Heyl
+- Aussiesim
+- Sparker, http://citizenparker.com
+- Zeromancer - CC0
+- Rihlsul
+- Quoting
+- Guard13007, https://guard13007.com
+- DarkZaitzev, http://darkzaitzev.deviantart.com
+- SpencerDub
+- GeneralAce135
+- Zajkonur
+- Catsu
+- Starseeker
+- Pepijn Poolman
+- Pierre Leducq
+- Caro Asercion
+- SeregaCthtuf
+
+Please, include a mention "Icons made by {author}" in your derivative work.
+
+If you use them in one of your project, don't hesitate to drop a message to delapouite@gmail.com or ping @GameIcons on twitter.
+
+More info and icons available at https://game-icons.net
+
+Effect pack art (img/fxp/)
+-------------------------
+Nine pack-effect animations, 8 frames each (72 PNG files). Used only when a button
+turns on "Pack effect" and picks a Kind. The Forge fire/frost/arcane/bolt art is
+unchanged.
+
+  Kenney Particle Pack (CC0 / Public Domain)
+    https://kenney.nl/assets/particle-pack
+    Author: Kenney Vleugels (Kenney.nl)
+    Used for: Blaze, Ice glints, Crackle, Rune circle, Holy light, Poison, Smoke
+    Changes: Kenney's black-background sprites were converted to white luminance
+    glyphs and composited into 8-frame, 96x96 rim / disc loops for hotbuttons.
+
+  2D Spell Effects (CC0 / Public Domain)
+    https://opengameart.org/content/2d-spell-effects
+    Author: the OpenGameArt uploader of this page (made for the aRPG Nyrthos, www.nyrthos.com)
+    Used for: Storm orb (from the lighteningBall strip)
+    Changes: frames were subsampled to 8 and resized into a 96x96 canvas.
+
+  Multiple Colors of Sparkle Animations (CC0 / Public Domain)
+    https://opengameart.org/content/multiple-colors-of-sparkle-animations
+    Author: VWolfdog (opengameart.org)
+    Used for: Sparkles (White strip)
+    Changes: frames were subsampled to 8 and resized into a 96x96 canvas.
+
+Other packs considered but not shipped: Magic and Smoke Effect (StumpyStrust, CC0)
+was too large (1024-4096 sheet tiles) for a hotbutton frame budget; Basic Pixel
+Animated Spells and StarsteelGaming Spell Effects are CC0 but too small / too
+directional for a rim overlay.

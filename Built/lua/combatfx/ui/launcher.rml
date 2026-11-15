@@ -1,0 +1,1 @@
+<rml><head><title>CombatFx </title><link type="text/rcss" href="cfxui.rcss"/></head><body id="body"><div id="launch" drag="1"><img id="lglow" src="../img/glow_fx.png"/><img id="lico" src="../img/ic_fx_64.png"/><div id="ldot"></div></div></body></rml>

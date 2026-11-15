@@ -1,0 +1,5 @@
+# store every file byte-for-byte (no line-ending conversion)
+* -text
+*.dll binary
+*.png binary
+*.jpg binary

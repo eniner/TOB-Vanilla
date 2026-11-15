@@ -1,0 +1,5 @@
+<rml><head><title>RmlFx Test</title><style>
+body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: transparent; }
+body, body * { pointer-events: none; }
+#fx { position: absolute; left: 0; top: 0; right: 0; bottom: 0; width: auto; height: auto; min-width: 64dp; min-height: 64dp; }
+</style></head><body id="body"><canvas id="fx"></canvas></body></rml>

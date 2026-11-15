@@ -1,0 +1,23 @@
+<template name="window" content="window-content">
+<head>
+	<link type="text/rcss" href="window.rcss"/>
+</head>
+<body class="theme-redguides">
+	<div id="window-shadow"></div>
+	<div id="window-frame">
+		<div id="window-titlebar" drag="1">
+			<div id="window-logo" drag="1"></div>
+			<div id="window-icon" drag="1"></div>
+			<div id="window-title" drag="1">Window</div>
+			<div class="window-spacer" drag="1"></div>
+			<div id="window-glass" class="window-button" action="ui:glass" title="See-through">&#xE890;</div>
+			<div id="window-pin" class="window-button" action="window:pin" title="Pin">&#xE718;</div>
+			<div id="window-collapse" class="window-button" action="window:collapse" title="Collapse">&#xE70E;</div>
+			<div id="window-close" class="window-button close" action="window:close" title="Close">&#xE8BB;</div>
+		</div>
+		<div id="window-accent"></div>
+		<div id="window-content"></div>
+		<div id="window-grip" resize="1"></div>
+	</div>
+</body>
+</template>

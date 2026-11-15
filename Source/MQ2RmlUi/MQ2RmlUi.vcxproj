@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated with plugins\mkplugin.exe MQ2RmlUi, then trimmed to x64 (TOB/Live clients are 64-bit only). -->
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{6F2B3C1A-8E4D-4A7B-9C35-2D1E0F4A6B71}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), src\Plugin.props))\src\Plugin.props" Condition=" '$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), src\Plugin.props))' != '' " />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup>
+    <PreBuildEvent>
+      <Command>if exist "$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), tools\build_scripts\Plugin_Versioning.ps1))\tools\build_scripts\Plugin_Versioning.ps1" powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), tools\build_scripts\Plugin_Versioning.ps1))\tools\build_scripts\Plugin_Versioning.ps1" -ProjectName "$(MSBuildProjectName)" -ProjectDirectory "$([MSBuild]::EnsureTrailingSlash('$(MSBuildThisFileDirectory)'))\"</Command>
+      <Message>Updating version resource for $(MSBuildProjectName)...</Message>
+    </PreBuildEvent>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)src;$(MSBuildThisFileDirectory)contrib\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <!-- RmlUi comes from MQ's vcpkg (vcpkg_mq.txt, x64-windows-static) -->
+      <PreprocessorDefinitions>RMLUI_STATIC_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 /bigobj /d1trimfile:"$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))\" /d1trimfile:"$(WindowsSdkDir)\" %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- no build-machine path in the binary: PDB reference is just the file name -->
+      <AdditionalOptions>/PDBALTPATH:%25_PDB%25 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>rmlui_debugger.lib;rmlui.lib;freetype.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>rmlui_debugger.lib;rmlui.lib;freetyped.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="src\MQ2RmlUi.cpp" />
+    <ClCompile Include="src\CanvasRenderer.cpp" />
+    <ClCompile Include="src\ElementCanvas.cpp" />
+    <ClCompile Include="src\EqIconAtlas.cpp" />
+    <ClCompile Include="src\FxSystem.cpp" />
+    <ClCompile Include="src\TextFx.cpp" />
+    <ClCompile Include="src\NativeNimbus.cpp" />
+    <ClCompile Include="src\ActorMaterial.cpp" />
+    <ClCompile Include="src\OrnamentSwap.cpp" />
+    <ClCompile Include="src\RenderInterface_DX11.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\CanvasRenderer.h" />
+    <ClInclude Include="src\D3D11StateBackup.h" />
+    <ClInclude Include="src\ElementCanvas.h" />
+    <ClInclude Include="src\EqIconAtlas.h" />
+    <ClInclude Include="src\FxSim.h" />
+    <ClInclude Include="src\FxSystem.h" />
+    <ClInclude Include="src\TextFx.h" />
+    <ClInclude Include="src\TextFxCore.h" />
+    <ClInclude Include="src\shaders_tfx_bytecode.h" />
+    <ClInclude Include="src\NativeNimbus.h" />
+    <ClInclude Include="src\ActorMaterial.h" />
+    <ClInclude Include="src\OrnamentSwap.h" />
+    <ClInclude Include="src\NimbusClientOffsets.h" />
+    <ClInclude Include="src\RenderInterface_DX11.h" />
+    <ClInclude Include="src\shaders_canvas_bytecode.h" />
+    <ClInclude Include="src\shaders_fx_bytecode.h" />
+    <None Include="src\canvas_probe.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MQ2RmlUi.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="vcpkg_mq.txt" />
+    <None Include="CANVAS_API.md" />
+    <None Include="FX_API.md" />
+    <None Include="tools\compile-shaders.ps1" />
+    <None Include="tools\compile-fx-shaders.ps1" />
+    <None Include="tools\compile-tfx-shaders.ps1" />
+    <FxShaderSource Include="shaders\canvas.hlsl">
+      <Script>tools\compile-shaders.ps1</Script>
+      <Header>src\shaders_canvas_bytecode.h</Header>
+    </FxShaderSource>
+    <FxShaderSource Include="shaders\fx.hlsl">
+      <Script>tools\compile-fx-shaders.ps1</Script>
+      <Header>src\shaders_fx_bytecode.h</Header>
+    </FxShaderSource>
+    <FxShaderSource Include="shaders\tfx.hlsl">
+      <Script>tools\compile-tfx-shaders.ps1</Script>
+      <Header>src\shaders_tfx_bytecode.h</Header>
+    </FxShaderSource>
+  </ItemGroup>
+  <!--
+    Shaders: the compiled SM4/SM5 bytecode is embedded in the DLL via src\shaders_*_bytecode.h (checked in).
+    This target re-runs fxc only when a .hlsl is newer than its header, so a clean checkout builds without fxc.
+  -->
+  <Target Name="MQ2RmlUiCompileShaders" BeforeTargets="ClCompile" Inputs="@(FxShaderSource)" Outputs="@(FxShaderSource->'%(Header)')">
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File &quot;$(MSBuildThisFileDirectory)%(FxShaderSource.Script)&quot; -Fxc &quot;$(WindowsSdkVerBinPath)x64\fxc.exe&quot;" />
+  </Target>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

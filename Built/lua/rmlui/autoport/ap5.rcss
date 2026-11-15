@@ -1,0 +1,108 @@
+/* AutoPort v5 — one basic, uniform style for every live port. Restyle freely.
+   Rules: no blur/box-shadow/looping animation, no inherit, no Consolas, no display:none on inputs. */
+#window-content { background-color: #161a22f0; }
+.ap-root { display: flex; flex-direction: column; gap: 4dp; padding: 8dp 10dp; overflow: auto; height: 100%; box-sizing: border-box; font-family: "Segoe UI"; font-size: 13dp; color: #dfe4ee; white-space: nowrap; }
+.ap-root div { flex-shrink: 0; }
+.ap-row { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 6dp; }
+.ap-text { color: #dfe4ee; }
+.ap-row > * { flex-shrink: 0; } /* ImGui: SameLine items keep their natural size; a too-wide line scrolls (ap-root overflow) */
+.ap-text.wrap { white-space: normal; }
+.ap-text.muted { color: #7f8899; }
+.ap-text.clk { color: #8fc3ff; }
+.ind1 { margin-left: 14dp; } .ind2 { margin-left: 28dp; } .ind3 { margin-left: 42dp; } .ind4 { margin-left: 56dp; } .ind5 { margin-left: 70dp; } .ind6 { margin-left: 84dp; }
+.dis { opacity: 0.45; }
+.ap-btn { box-sizing: border-box; align-self: flex-start; display: inline-block; padding: 3dp 10dp; border-width: 1dp; border-color: #3a4357; border-radius: 4dp; color: #e8ecf4; text-align: center;
+          decorator: vertical-gradient(#2d3548 #222838); }
+.ap-btn:hover { decorator: vertical-gradient(#3a4560 #2a3246); border-color: #5b6c90; }
+.ap-btn:active { decorator: vertical-gradient(#1d2230 #262d3f); }
+.ap-btn.sm { padding: 1dp 6dp; font-size: 12dp; }
+.ap-btn.link { decorator: none; border-width: 0; color: #8fc3ff; padding: 0; }
+.ap-check, .ap-radio { display: flex; flex-direction: row; align-items: center; gap: 6dp; }
+.ap-check .box, .ap-radio .box { width: 14dp; height: 14dp; border-width: 1dp; border-color: #4a5470; background-color: #0f1219; border-radius: 3dp; }
+.ap-radio .box { border-radius: 7dp; }
+.ap-check .mark, .ap-radio .mark { margin: 3dp; width: 6dp; height: 6dp; border-radius: 1dp; background-color: transparent; }
+.ap-radio .mark { border-radius: 3dp; }
+.ap-check.on .mark, .ap-radio.on .mark { background-color: #6fb1ff; }
+.ap-check:hover .box, .ap-radio:hover .box { border-color: #6f84b0; }
+.ap-sel { display: flex; flex-direction: row; padding: 2dp 6dp; border-radius: 3dp; color: #dfe4ee; }
+.ap-sel:hover { background-color: #ffffff12; }
+.ap-sel.on { background-color: #2f4f7a; }
+.ap-sel .short { margin-left: auto; color: #7f8899; padding-left: 16dp; }
+.ap-field { display: flex; flex-direction: row; align-items: center; gap: 6dp; }
+.ap-field .lbl { color: #aab3c4; }
+.ap-field .val { color: #aab3c4; width: 44dp; }
+input { width: 180dp; height: 20dp; padding: 1dp 6dp; background-color: #0f1219; border-width: 1dp; border-color: #3a4357; border-radius: 3dp; color: #e8ecf4; font-family: "Segoe UI"; font-size: 13dp; }
+input:focus { border-color: #6fb1ff; }
+input.hex { width: 76dp; }
+input[type="range"] { width: 160dp; height: 14dp; padding: 0; background-color: transparent; border-width: 0; }
+input[type="range"] slidertrack { height: 4dp; margin-top: 5dp; background-color: #2b3243; border-radius: 2dp; }
+input[type="range"] sliderbar { width: 10dp; height: 14dp; background-color: #6fb1ff; border-radius: 3dp; }
+input[type="range"] sliderarrowdec, input[type="range"] sliderarrowinc { width: 0; height: 0; }
+select { width: 180dp; height: 20dp; padding: 1dp 6dp; background-color: #0f1219; border-width: 1dp; border-color: #3a4357; border-radius: 3dp; color: #e8ecf4; }
+select selectvalue { padding-top: 1dp; }
+select selectbox { background-color: #1b202b; border-width: 1dp; border-color: #3a4357; padding: 2dp; }
+select selectbox option { padding: 2dp 6dp; color: #dfe4ee; }
+select selectbox option:hover { background-color: #2f4f7a; }
+.ap-mcombo select { width: 104dp; } /* combo used as a menu (all items unselected): compact like an ImGui menu button */
+.ap-row > .ap-mcombo { flex-shrink: 0; }
+.swatch { width: 18dp; height: 18dp; border-width: 1dp; border-color: #4a5470; border-radius: 3dp; }
+.ap-sep { height: 1dp; background-color: #2e3546; margin: 4dp 0; }
+.ap-septext { display: flex; flex-direction: row; align-items: center; gap: 8dp; color: #aab3c4; margin: 4dp 0; }
+.ap-septext .line { flex: 1; height: 1dp; background-color: #2e3546; }
+.ap-prog { position: relative; height: 18dp; background-color: #0f1219; border-width: 1dp; border-color: #3a4357; border-radius: 3dp; text-align: center; }
+.ap-prog .fill { position: absolute; left: 0; top: 0; height: 100%; decorator: vertical-gradient(#4f8fd8 #2f63a8); border-radius: 2dp; }
+.ap-prog span { position: relative; color: #ffffff; font-size: 12dp; }
+.ap-plot { display: flex; flex-direction: column; gap: 2dp; }
+.ap-plot .bars { display: flex; flex-direction: row; align-items: flex-end; height: 60dp; gap: 1dp; padding: 2dp; background-color: #0f1219; border-width: 1dp; border-color: #3a4357; border-radius: 3dp; }
+.ap-plot .bar { flex: 1; height: 0; background-color: #4f8fd8; }
+.ap-plot.lines .bar { background-color: #2f63a8; border-top-width: 2dp; border-top-color: #8fc3ff; }
+.ap-plot .lbl { color: #7f8899; font-size: 11dp; }
+.ap-img { background-color: #ffffff10; border-width: 1dp; border-color: #3a4357; border-radius: 3dp; }
+.ap-child { display: flex; flex-direction: column; gap: 4dp; overflow: auto; padding: 4dp; min-height: 20dp; }
+.ap-child.border { border-width: 1dp; border-color: #2e3546; border-radius: 4dp; background-color: #00000026; }
+.ap-group { display: flex; flex-direction: column; gap: 4dp; }
+.ap-tree .head, .ap-header .head { display: flex; flex-direction: row; gap: 6dp; padding: 2dp 4dp; border-radius: 3dp; color: #dfe4ee; }
+.ap-header .head { padding: 4dp 8dp; decorator: vertical-gradient(#2a3346 #222a3a); border-width: 1dp; border-color: #343d52; }
+.ap-tree .head:hover, .ap-header .head:hover { background-color: #ffffff12; }
+.ap-tree .arr, .ap-header .arr { width: 10dp; color: #6fb1ff; }
+.ap-tree .body { display: flex; flex-direction: column; gap: 4dp; margin-left: 14dp; }
+.ap-header .body { display: flex; flex-direction: column; gap: 4dp; padding: 4dp 2dp 2dp 8dp; }
+.ap-tabbar { display: flex; flex-direction: column; gap: 0; }
+.ap-tabbar .tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2dp; border-bottom-width: 1dp; border-bottom-color: #3a4357; }
+.ap-tabbar .tab { padding: 4dp 12dp; border-width: 1dp 1dp 0 1dp; border-color: #2e3546; border-radius: 4dp 4dp 0 0; color: #aab3c4; background-color: #1d2230; }
+.ap-tabbar .tab:hover { color: #e8ecf4; }
+.ap-tabbar .tab.on { color: #ffffff; decorator: vertical-gradient(#34507a #263a5a); border-color: #4b6a99; }
+.ap-tabbar .panel { display: flex; flex-direction: column; gap: 4dp; padding: 6dp 2dp; }
+.ap-table { display: flex; flex-direction: column; border-width: 1dp; border-color: #2e3546; border-radius: 3dp; }
+.ap-table.legacy { border-width: 0; }
+.ap-table .tr { display: flex; flex-direction: row; }
+.ap-table .tr.alt { background-color: #ffffff08; }
+.ap-table .tr.th { decorator: vertical-gradient(#2a3346 #222a3a); color: #aab3c4; }
+.ap-table .td { display: flex; flex-direction: column; gap: 2dp; padding: 2dp 6dp; overflow: hidden; box-sizing: border-box; }
+.ap-table .td input, .ap-table .td select { width: 90dp; }
+.ap-menubar { display: flex; flex-direction: row; gap: 2dp; border-bottom-width: 1dp; border-bottom-color: #2e3546; padding-bottom: 2dp; }
+.ap-menubar .mb { padding: 2dp 8dp; border-radius: 3dp; color: #dfe4ee; }
+.ap-menubar .mb:hover, .ap-menubar .mb.on { background-color: #2f4f7a; }
+.ap-menu, .ap-submenu { display: flex; flex-direction: column; padding: 4dp; background-color: #1b202b; border-width: 1dp; border-color: #3a4357; border-radius: 4dp; }
+.ap-submenu { margin-left: 12dp; }
+.ap-popup { position: absolute; left: 10%; top: 40dp; width: 80%; z-index: 10; background-color: #1b202bf8; border-width: 1dp; border-color: #5b6c90; border-radius: 5dp; }
+.ap-popup.modal { border-color: #6fb1ff; }
+.ap-popup .ph { display: flex; flex-direction: row; padding: 4dp 8dp; decorator: vertical-gradient(#2d3548 #222838); color: #ffffff; }
+.ap-popup .x { margin-left: auto; padding: 0 6dp; color: #aab3c4; }
+.ap-popup .x:hover { color: #ffffff; }
+.ap-popup .pb { display: flex; flex-direction: column; gap: 4dp; padding: 8dp; }
+.ap-space { width: 4dp; }
+/* see-through: no backgrounds/borders/panels; text, numbers, buttons stay */
+body.see-through #window-content, body.see-through .ap-child, body.see-through .ap-table, body.see-through .ap-table .tr,
+body.see-through .ap-header .head, body.see-through .ap-tabbar .tab, body.see-through .ap-menu, body.see-through .ap-plot .bars,
+body.see-through .ap-sep, body.see-through .ap-septext .line, body.see-through .ap-tabbar .tabs, body.see-through .ap-menubar
+{ background-color: transparent; decorator: none; border-width: 0; }
+/* wide SameLine rows scroll horizontally (ImGui keeps items at natural width): make that scrollbar findable */
+.ap-root scrollbarhorizontal { height: 10dp; margin-bottom: 0; }
+.ap-root scrollbarhorizontal slidertrack { background-color: #ffffff0c; border-radius: 3dp; }
+.ap-root scrollbarhorizontal sliderbar { margin-top: 2dp; height: 6dp; min-width: 28dp; border-radius: 3dp; background-color: #ffffff55; }
+.ap-root scrollbarhorizontal sliderbar:hover, .ap-root scrollbarhorizontal sliderbar:active { background-color: #ffffff88; }
+/* tooltips (SetTooltip / BeginTooltip / HelpMarker): shown while hovering the item */
+.ap-tipwrap { display: flex; flex-direction: row; position: relative; }
+.ap-tip { display: none; position: absolute; left: 0; top: 100%; z-index: 50; margin-top: 2dp; padding: 4dp 8dp; background-color: #0d1017f2; border-width: 1dp; border-color: #4a5470; border-radius: 3dp; color: #e8ecf4; white-space: nowrap; }
+.ap-tipwrap:hover .ap-tip { display: block; }

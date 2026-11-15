@@ -1,0 +1,23 @@
+<rml><head><title>CombatFx Overlay</title><link type="text/rcss" href="combatfx.rcss"/></head><body id="body" class="fx"><div id="ov" class="fx"><canvas id="cfx"></canvas>
+<div class="wrap" id="vigw"><div class="edges" id="vig"><div class="eg et"></div><div class="eg eb"></div><div class="eg el"></div><div class="eg er"></div></div></div>
+<div class="wrap" id="dmgw"><div class="edges" id="dmg"><div class="eg et"></div><div class="eg eb"></div><div class="eg el"></div><div class="eg er"></div></div></div>
+<div class="wrap" id="healw"><div class="edges" id="heal"><div class="eg et"></div><div class="eg eb"></div><div class="eg el"></div><div class="eg er"></div></div></div>
+<div class="wrap" id="aggw"><div class="edges" id="agg"><div class="eg et"></div><div class="eg eb"></div><div class="eg el"></div><div class="eg er"></div></div></div>
+<div class="wrap" id="cfw"><div id="cflash"></div></div>
+<div id="parts"></div>
+<div id="burst"></div>
+<div id="tplate"><div id="tpn"></div><div id="tpb"><div id="tpf"></div></div></div>
+<div id="pool"></div>
+<div id="streak"></div>
+<div id="ban"></div><div id="ban2"></div>
+<div id="stamp"></div>
+<div class="ts" id="ts1"></div><div class="ts" id="ts2"></div><div class="ts" id="ts3"></div><div class="ts" id="ts4"></div>
+<div id="recap"></div>
+<div id="lm"></div>
+<div id="gm"></div><div id="drc"></div><div id="tk"></div>
+<div class="wl" id="wl1"></div><div class="wl" id="wl2"></div><div class="wl" id="wl3"></div>
+<div class="al" id="al1"></div><div class="al" id="al2"></div><div class="al" id="al3"></div>
+<div id="mom"><div class="mor0" id="moml"></div><div class="mor1" id="momr"></div><div id="momt"></div><div id="moms"></div></div>
+<div id="cbar"><div id="cbh"><span id="cbn"></span><span id="cbt"></span></div><div id="cbb"><div id="cbf"></div></div></div>
+<div id="death"><div id="dtit">YOU DIED</div><div id="dsub"></div></div>
+</div></body></rml>

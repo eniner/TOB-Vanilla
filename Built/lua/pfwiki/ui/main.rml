@@ -1,0 +1,44 @@
+<rml>
+<head>
+	<title>EverQuest ProFusion</title>
+	<link type="text/template" href="../../rmlui/theme/window.rml"/>
+	<link type="text/rcss" href="../../rmlui/theme/tool.rcss"/>
+	<link type="text/rcss" href="wiki.rcss"/>
+</head>
+<body template="window" class="pf-wiki">
+	<!-- ProFusion archive chrome (not Mini Wiki / redguides hero) -->
+	<div class="pf-topbar">
+		<div class="pf-brand" action="page:home">
+			<div class="pf-sigil">✦</div>
+			<div class="pf-brand-text">EverQuest <span class="gold">ProFusion</span></div>
+		</div>
+		<div class="pf-search">
+			<span class="pf-search-ico">⌕</span>
+			<input id="filter" class="text" type="text" value="" size="28"/>
+		</div>
+	</div>
+
+	<div class="pf-layout">
+		<div class="pf-sidebar">
+			<div id="nav" class="pf-nav"></div>
+		</div>
+		<div class="pf-main">
+			<div class="pf-crumbs">
+				<span class="pf-crumb" action="page:home">Home</span>
+				<span class="pf-crumb-sep">›</span>
+				<span id="chip_sec" class="pf-crumb-sec">Server</span>
+			</div>
+			<div class="pf-page-card">
+				<div id="page_title" class="pf-page-title">Home</div>
+				<div id="page" class="pf-page-body"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="pf-foot">
+		<span class="dot"></span>
+		<span id="status">Ready.</span>
+		<span class="pf-foot-meta"><span id="st_pages">0</span> pages · offline archive</span>
+	</div>
+</body>
+</rml>

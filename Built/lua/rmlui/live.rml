@@ -1,0 +1,38 @@
+<rml>
+<head>
+	<title>Live</title>
+	<link type="text/template" href="theme/window.rml"/>
+	<link type="text/rcss" href="theme/tool.rcss"/>
+	<style>
+		.ig-page { display: flex; flex-direction: column; gap: 6dp; overflow-y: auto; flex: 1; min-height: 200dp; padding: 4dp; }
+		.ig-win { border: 1dp #3a2a18; margin: 4dp 0; padding: 6dp; display: flex; flex-direction: column; gap: 4dp; }
+		.ig-wintitle { color: #e6c36a; font-weight: bold; font-size: 13dp; }
+		.ig-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6dp; margin: 1dp 0; }
+		.ig-text { color: #d4c4a0; font-size: 13dp; }
+		.ig-btn { margin: 0; }
+		.ig-ico { font-family: Icons; }
+		.ig-row input.checkbox { width: 16dp; height: 16dp; margin: 0 6dp 0 0; }
+		.ig-row input.text { width: 180dp; }
+		.ig-row input.range { width: 200dp; }
+		.ig-cell input.text { width: 100%; }
+		.ig-hdr { color: #f5e6b8; font-weight: bold; }
+		.ig-hdr.on { color: #ffffff; }
+		.ig-tab.on { background-color: #5c1a1a; color: #ffffff; }
+		.ig-check { color: #d4c4a0; }
+		.ig-child { display: flex; flex-direction: column; gap: 2dp; margin-left: 4dp; }
+		.ig-tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: 4dp; margin: 2dp 0 6dp 0; }
+		.ig-table { display: flex; flex-direction: column; gap: 2dp; width: 100%; }
+		.ig-trow { display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%; gap: 8dp; }
+		.ig-cell { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4dp; flex: 1; min-width: 36dp; }
+		.ig-sep { height: 1dp; background-color: #3a2a18; margin: 4dp 0; border-width: 0; }
+		.ig-hit { height: 16dp; background-color: #5c1a1a; margin: 2dp 0; }
+		.ig-bar { display: block; height: 14dp; width: 210dp; background-color: #2a1c14; margin: 2dp 0; }
+		.ig-barfill { display: block; height: 14dp; background-color: #8b2e2e; }
+		.ig-note { color: #8a7a62; font-size: 12dp; }
+	</style>
+</head>
+<body template="window">
+	<div id="page" class="ig-page"></div>
+	<div class="status"><span class="dot"></span><span id="status">Live</span></div>
+</body>
+</rml>
