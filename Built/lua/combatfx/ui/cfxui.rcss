@@ -31,10 +31,13 @@ div { display: block; } span { display: inline; } img { display: inline-block; }
 .gr { left: 50%; right: 10px; decorator: horizontal-gradient(#b090ffd0 #8a6cf000); }
 
 /* ---------------- segmented tabs */
-#tabs { position: absolute; left: 14px; right: 14px; top: 62px; height: 62px; border-radius: 9px; background-color: #08070fd0; border: 1px #ffffff12; }
+#tabs { position: absolute; left: 14px; right: 14px; top: 62px; height: 60px; padding: 2px; border-radius: 9px; background-color: #08070fd0; border: 1px #ffffff12; }
 .tab { box-sizing: border-box; position: relative; float: left; width: 11.11%; height: 28px; line-height: 28px; text-align: center; font-size: 9px; font-weight: bold; color: #8e88aa; border-radius: 8px; white-space: nowrap; transition: background-color color 0.15s linear-in-out; }
 .tab:hover { color: #efe8ff; background-color: #ffffff08; }
 .tab.sel { color: #ffffff; decorator: vertical-gradient(#5a3ca8e8 #2e1e64e8); border: 1px #b090ff70; border-bottom: 2px #c8a8ff; }
+.tab.top { width: 33.3%; font-size: 11px; }
+.tab.sub { width: 19.9%; height: 24px; line-height: 24px; font-size: 9px; margin-top: 4px; }
+.tab.hid { display: none; }
 
 /* ---------------- page + footer */
 #spage { position: absolute; left: 14px; right: 14px; top: 134px; bottom: 40px; overflow: hidden auto; padding-right: 4px; }

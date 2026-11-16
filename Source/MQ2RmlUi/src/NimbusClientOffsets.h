@@ -29,6 +29,8 @@ constexpr uintptr_t kRvaVerTime     = __ActualVersionTime_x - eqlib::EQGamePrefe
 // PlayerClient field offsets from eqlib's own class layout.
 constexpr size_t kOffSpawnId = offsetof(eqlib::PlayerBase, SpawnID);
 constexpr size_t kOffActor   = offsetof(eqlib::PlayerZoneClient, mActorClient) + offsetof(eqlib::ActorClient, pActor);
+// t487: ActorClient::pParticlePoints[10]; PlaySpellEffectStage maps attach 1 -> [0], 6 LFOOT -> [5], 7 RFOOT -> [6] (null -> [0])
+constexpr size_t kOffPoints  = offsetof(eqlib::PlayerZoneClient, mActorClient) + offsetof(eqlib::ActorClient, pParticlePoints);
 
 // Version strings the (B) addresses were taken from. Must equal eqlib's expected client, or (B) is meaningless.
 constexpr char kExpectedDate[] = "Sep 11 2025";
@@ -42,6 +44,7 @@ static_assert(kRvaVerDate     == 0x964B00, "eqlib __ActualVersionDate differs fr
 static_assert(kRvaVerTime     == 0x964AF0, "eqlib __ActualVersionTime differs from the RE'd client");
 static_assert(kOffSpawnId == 0x168,  "eqlib PlayerBase::SpawnID differs from the RE'd client");
 static_assert(kOffActor   == 0x1170, "eqlib mActorClient.pActor differs from the RE'd client");
+static_assert(kOffPoints  == 0x1110, "eqlib mActorClient.pParticlePoints differs from the RE'd client");
 
 // ---- (B) signature-checked fallback: not in eqlib ------------------------------------------------------------
 // eqgame.exe RVAs (base 0x140000000)
@@ -55,8 +58,13 @@ constexpr uintptr_t kRvaDensity     = 0xEE2A94;   // float pair passed as densit
 constexpr uintptr_t kRvaPsVtbl      = 0x2BEB28;   // CParticleSystem vftable (ctor FUN_18009de70)
 constexpr uintptr_t kRvaPsCreate    = 0x09FE50;   // vtbl[0x30] create on list +0x18 (spell emitters)
 constexpr uintptr_t kRvaPsKillKey   = 0x0A0650;   // vtbl[0x70] kill emitters whose key (+0xc) matches
+// t468 custom proc effects (signature-checked separately in NativeNimbus.cpp; a mismatch only turns THEM off)
+constexpr uintptr_t kRvaPlayStage   = 0x275030;   // eqgame: PlaySpellEffectStage(effId, stage, SpellEffectNew*, caster, target, pos*, missile, dur, chk, flag, -1)
+constexpr uintptr_t kRvaAddEmitDef  = 0x09AF50;   // EQGraphics: CEmitterDefinitionCollection::AddEmitterDefinition(coll, record*) (logs its own name)
+constexpr uintptr_t kRvaDefRadius   = 0x09A480;   // EQGraphics: CEmitterDef bounding radius (+0x30), what the .edd loader 0x9C010 calls per def
 // spellsnew.eff record layout
 constexpr size_t kRecSize    = 0x10c;                 // SpellEffectNew
 constexpr size_t kStage2Emit = 0x40 + 2 * 0x44 + 4;   // Stages[2].Emitters[0]
+constexpr size_t kStage0Emit = 0x40 + 4;            // t469: Stages[0].Emitters[0] (caster stage)
 
 } // namespace NimbusOffsets

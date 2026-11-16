@@ -8,7 +8,7 @@ local mq = package.loaded['mq'] or {}
 
 M.ROLES = { 'Any', 'Tank', 'Healer', 'Melee DPS', 'Caster', 'Support' }
 -- never part of a loadout: placement, records, simulator knobs, the loadout pointer itself
-local SKIP_TOP = { pos = true, rec = true, launcher_x = true, launcher_y = true, sim_eps = true, sim_power = true, sim_loop = true }
+local SKIP_TOP = { pos = true, rec = true, launcher_x = true, launcher_y = true, sim_eps = true, sim_power = true, sim_loop = true, nav = true }   -- t494: nav = which settings tab is open, not a setup
 local SKIP_KEY = { ['parses.lo'] = true, ['naura.prev'] = true, ['tfx.ver'] = true }
 
 function M.path()

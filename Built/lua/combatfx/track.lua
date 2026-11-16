@@ -66,7 +66,7 @@ function M.db_step(lines)
     end
     return DB.state
 end
--- EQ duration formula (ticks of 6 s) for your level; checked against real logs (Mychar, level 80): Chaos Venom (form 1,
+-- EQ duration formula (ticks of 6 s) for your level; checked against real logs (Pegoca, level 80): Chaos Venom (form 1,
 -- 7 ticks) first tick 16:39:38 -> worn off 16:40:20 = 42 s; Dread Pyre (form 7, 5 ticks) 16:57:58 -> 16:58:28 = 30 s
 function M.calc_ticks(level, form, dur)
     level = tonumber(level) or 1; form = tonumber(form) or 0; dur = tonumber(dur) or 0
@@ -955,20 +955,20 @@ function M.sandbox(fn)
     if not ok then return nil, a end
     return a, b
 end
--- real-format lines (Mychar's log, TOB client): a necro fight with pet hits and two DoTs, run through the real parser
+-- real-format lines (Pegoca's log, TOB client): a necro fight with pet hits and two DoTs, run through the real parser
 M.PREVIEW_LINES = {
     'You begin casting Chaos Venom.',
     'a training dummy has taken 312 damage from your Chaos Venom.',
     'You begin casting Dread Pyre.',
     'a training dummy has taken 845 damage from your Dread Pyre.',
-    'Mychar`s pet hits a training dummy for 154 points of damage.',
-    'Mychar`s pet kicks a training dummy for 98 points of damage.',
+    'Pegoca`s pet hits a training dummy for 154 points of damage.',
+    'Pegoca`s pet kicks a training dummy for 98 points of damage.',
     'a training dummy has taken 312 damage from your Chaos Venom.',
 }
 function M.preview_panel_html(now)
     return M.sandbox(function()
         local P = require('combatfx.parse')
-        local par = P.new(function() return 'Mychar' end, function() return 'Mychar`s pet' end)
+        local par = P.new(function() return 'Pegoca' end, function() return 'Pegoca`s pet' end)
         local saved_t = M._debug_target; M._debug_target = 'a training dummy'
         M.fight_start(now - 12000)
         for i, l in ipairs(M.PREVIEW_LINES) do

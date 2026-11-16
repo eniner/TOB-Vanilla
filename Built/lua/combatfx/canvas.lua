@@ -875,6 +875,8 @@ local function aura_wanted()
 end
 
 local function trail_wanted()
+    local NT = package.loaded['combatfx.trails']         -- t485: EQ plays the trail natively (slot 2): no screen marks
+    if NT and NT.native and NT.native() then return false, 'inferno' end
     if preview_trail_t > 0 and now() < preview_trail_t then return true, preview_trail_style or 'inferno' end
     local _, rt = ground_cfg()
     if rt and rt.on then return true, rt.style or 'inferno' end
@@ -1770,13 +1772,17 @@ local function prune_and_ingest(rules)
 end
 
 local function update_markers()
-    if not markers_wanted() then
-        MK.live, MK.scanning, MK.by_id = {}, false, {}
-        return
-    end
+    -- t495: the Markers page's NEARBY list scans too while that page is open, even with the Markers switch off
+    -- (markers.on=false stopped every scan: the list stayed at 0, "Scanning nearby NPCs..." forever)
+    local want = markers_wanted()
     local t = now()
-    local rules = marker_rules()
-    prune_and_ingest(rules)
+    local list = t < (MK.list_until or 0)
+    if not want then
+        MK.live, MK.by_id = {}, {}
+        if not list then MK.scanning = false; return end
+    end
+    local rules = want and marker_rules() or {}
+    if want then prune_and_ingest(rules) end
     if not MK.scanning then
         if MK.last_done > 0 and (t - MK.last_done) < M.MARK_SCAN_MS then
             return
@@ -2056,6 +2062,26 @@ end
 
 function M.marker_nearby()
     return MK.nearby
+end
+-- t495: keep the nearby list scanning for ms (the Markers page is open)
+function M.marker_want_list(ms)
+    MK.list_until = now() + (ms or 60000)
+end
+-- t495: one full nearby read right now (Refresh / page open): fills the list on this frame
+function M.marker_scan_now()
+    local total = spawn_count_mk()
+    local cap = math.min(total, 400)
+    local list = {}
+    for i = 1, cap do
+        local sp = read_spawn_mk(i)
+        if sp and not MK_BLOCKED[sp.typ] then
+            list[#list + 1] = { id = sp.id, name = sp.name, dist = sp.dist, height = sp.height }
+        end
+    end
+    table.sort(list, function(a, b) return (a.dist or 0) < (b.dist or 0) end)
+    if #list > 0 or total <= 0 then MK.nearby = list end
+    marklog(string.format('MARKSCAN now total=%d nearby=%d', total, #list))
+    return #MK.nearby, total
 end
 
 function M.debug_marker_live()
@@ -3805,6 +3831,13 @@ function M.glow_at(x, y, r, g, b, size, life, kind)
 end
 
 function M.crit(x, y)
+    do  -- t464: 'Also on crits' + native proc effects: EQ plays the record on the body; no screen burst
+        local PF = package.loaded['combatfx.procfx']
+        if PF and PF.fire then
+            local ok, owned = pcall(PF.fire, 'crit')
+            if ok and owned then return end
+        end
+    end
     if not ensure() then return end
     update_anchor()
     clear_combat_fx()

@@ -8,7 +8,7 @@
 --   heal_in  { n, who, crit, over, sp, hot }   heal_out { n, tgt, crit, over, sp, hot, self }
 --   resist_out { sp }  resist_in { sp }  absorb { n }  finish {}  ods { n, who } (a non-melee hit that was not your shield)
 --   f8b: oheal { who, tgt, n } (others healing others), cast { sp } / activate { sp } (yours), ocast { who, sp }, died { by }
--- Crit announcements of the RoF2 client ("Tester scores a critical hit! (N)", "You deliver a critical blast! (N)",
+-- Crit announcements of the RoF2 client ("Enine scores a critical hit! (N)", "You deliver a critical blast! (N)",
 -- "... lands a Crippling Blow!(N)", "... performs an exceptional heal! (N)") are never damage: they flag the next
 -- matching line of the same actor (your pet's melee for your melee crits). Their number is not the damage on this
 -- server (seen: crit (14347) -> slash 14430), so amounts always come from the damage line.
@@ -179,7 +179,7 @@ function P:classify1(line, now)
     local ot, oa
     ot, oa, n = base:match("^(.-) is %a+ by (.-)'s .- for ([%d,]+) points? of non%-melee damage[%.!]$")
     if ot then
-        -- lc1: TOB prints a DS twice: "X was hit by non-melee for N points of damage." then "X is pierced by Mypet's thorns for N
+        -- lc1: TOB prints a DS twice: "X was hit by non-melee for N points of damage." then "X is pierced by Kibab's thorns for N
         -- points of non-melee damage." (live log 2026-11-15). The named line wins; drop the generic copy so it is not also an 'ods'.
         for k = #self.ds, 1, -1 do local p = self.ds[k]; if p.who == lower(ot) and p.n == num(n) then table.remove(self.ds, k); break end end
         if self:who(oa) == 'pet' then out[#out + 1] = { k = 'dmg', who = 'pet', cat = 'ds', n = num(n), tgt = ot, flags = flags }
@@ -326,15 +326,15 @@ function P:classify1(line, now)
     if n then out[#out + 1] = { k = 'absorb', n = num(n) }; return out end
     return P.f10(self, line, base)
 end
--- lc1: a pet / other's damage spell prints twice on this server (live log 2026-11-15, Mychar + Mypet, TOB client):
---   "Mypet strikes an undead training dummy for 21550 points of damage."
---   "Mypet hit an undead training dummy for 21550 points of magic damage by Specter Lifetap."
+-- lc1: a pet / other's damage spell prints twice on this server (live log 2026-11-15, Pegoca + Kibab, TOB client):
+--   "Kibab strikes an undead training dummy for 21550 points of damage."
+--   "Kibab hit an undead training dummy for 21550 points of magic damage by Specter Lifetap."
 -- one cast ("beams a smile"), one "staggers", one hit. A non-you "strikes" line is held for one line: dropped when the next
 -- line is the same actor's typed spell hit on the same target for the same amount, otherwise released in front of that line
 -- (or by P:flush from the 4 Hz watcher), so real "strikes" melee is still counted, just one line later.
 P.HOLD_MS = 1000
 -- lc2: your own nukes print twice too (live log 2026-11-15 11:39:53, TOB client):
---   "Mychar hit an undead training dummy for 4300 points of  damage by ."            (no type, no spell)
+--   "Pegoca hit an undead training dummy for 4300 points of  damage by ."            (no type, no spell)
 --   "You hit an undead training dummy for 4300 points of magic damage by Ancient: Touch of Orshilak."
 -- the bare one is held the same way and dropped when the named "You hit" twin follows.
 local function holdable(e)

@@ -15,6 +15,13 @@ RmlUi plugin (MQ2RmlUi) plus CombatFX, ButtonMaster RML, PF Wiki, RmlFPS and an 
 | `Built\lua\pfwiki` | ProFusion wiki browser in game. |
 | `Built\lua\rmlfps` | FPS / frame time / GPU meter. |
 | `Built\lua\rmluidemo_pro` | Demo window showing what RmlUi can do. |
+| `Built\lua\pocketfarm_rml` | PocketFarm (farming engine + SpawnWatch, RmlUi window). CombatFX Markers can import its zone watch list and Pull list (read-only). |
+
+## Latest update
+
+- MQ2RmlUi: native foot trails that work like EQ's own nimbus trails (Nimbus of Lava #566), steady through movement, zoning and illusions; native proc / spell effects.
+- CombatFX: settings in 3 groups (Visuals, Settings/UI, Markers & Parses); Trail tab with previews; Spell Gems & Procs (one box + Set per gem / weapon proc); ornament shield fix; Markers nearby list fills on open / Refresh.
+- Added PocketFarm (`pocketfarm_rml`) so Markers can import its watch / Pull lists. PocketFarm engine is by Kaen01 (from PocketFarm.mac); its credits are kept in the files.
 
 ## Requirements
 
@@ -39,6 +46,7 @@ RmlUi plugin (MQ2RmlUi) plus CombatFX, ButtonMaster RML, PF Wiki, RmlFPS and an 
    /lua run pfwiki
    /lua run rmlfps
    /lua run rmluidemo_pro
+   /lua run pocketfarm_rml
    ```
    Do **not** `/lua run rmlui` - it is a library the others use. Stop a script with `/lua stop <name>`.
 
@@ -68,7 +76,7 @@ Output: `build\bin\release\plugins\MQ2RmlUi.dll`. Details in `Source\MQ2RmlUi\RE
 
 ## Uninstall
 
-`/lua stop` each script, `/plugin MQ2RmlUi unload`, then delete `<MQ>\Plugins\MQ2RmlUi.dll` and the six folders above from `<MQ>\lua`. Delete the `combatfx_*`, `ButtonMaster_RML*` and `rmlfps.ini` files in `<MQ>\config` if you want your settings gone too.
+`/lua stop` each script, `/plugin MQ2RmlUi unload`, then delete `<MQ>\Plugins\MQ2RmlUi.dll` and the seven folders above from `<MQ>\lua`. Delete the `combatfx_*`, `ButtonMaster_RML*` and `rmlfps.ini` files in `<MQ>\config` if you want your settings gone too.
 
 ## Note
 

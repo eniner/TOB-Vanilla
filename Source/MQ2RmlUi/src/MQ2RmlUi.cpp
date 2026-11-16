@@ -1397,7 +1397,7 @@ PLUGIN_API int rml_features()
 		g_render.SetDevice(mq::gpD3D11Device);
 		caps = (int)g_render.GetRenderCaps();
 	}
-	return caps | 64 | 128 | 256 | 512 | 1024 | (Nimbus_Available() ? (2048 | 32768) : 0) | (Mat_Available() ? 4096 : 0) | (Orn_Available() ? 8192 : 0) | 16384; // 16384 = rml_tfx_* GPU combat text (TextFX) // 32768 = rml_nimbus_*_slot (second native slot: ground aura) // 2048 = native EQ nimbus (exact client build verified), 256 = drag patch (windowmoved event + rml_get_window), 512 = rml_fx_* particles, 1024 = bloom masked by the fx body capsule
+	return caps | 64 | 128 | 256 | 512 | 1024 | (Nimbus_Available() ? (2048 | 32768 | 65536) : 0) | (Nimbus_CustomAvailable() ? (131072 | 262144 | 1048576) : 0) | (Nimbus_LevelBypass() ? 524288 : 0) | (Mat_Available() ? 4096 : 0) | (Orn_Available() ? 8192 : 0) | 16384; // 16384 = rml_tfx_* GPU combat text (TextFX) // 32768 = rml_nimbus_*_slot (second native slot: ground aura) // 1048576 = slot 2 foot trail takes custom trail records (t485) // 65536 = rml_nimbus_burst (native proc effect on a spawn) // 2048 = native EQ nimbus (exact client build verified), 256 = drag patch (windowmoved event + rml_get_window), 512 = rml_fx_* particles, 1024 = bloom masked by the fx body capsule
 }
 
 PLUGIN_API int rml_key_mode(const char* name, int mode)
@@ -1643,6 +1643,18 @@ PLUGIN_API const char* rml_nimbus_status() { return Nimbus_Status(); }
 PLUGIN_API int rml_nimbus_add_slot(int slot, int effect_id, int flags) { return Nimbus_AddSlot(slot, effect_id, flags); }
 PLUGIN_API int rml_nimbus_remove_slot(int slot) { return Nimbus_RemoveSlot(slot); }
 PLUGIN_API const char* rml_nimbus_status_slot(int slot) { return Nimbus_StatusSlot(slot); }
+// proc rework (feature 65536): a short native spell effect on any spawn (spawn_id 0 = you, else e.g. your target), so EQ
+// itself wraps that body in the record's stage-2 emitters in the 3D world; taken off again after ms (300..8000).
+PLUGIN_API int rml_nimbus_burst(int spawn_id, int effect_id, int ms) { return Nimbus_Burst(spawn_id < 0 ? 0u : (uint32_t)spawn_id, effect_id, ms); }
+PLUGIN_API int rml_nimbus_burst_ex(int spawn_id, int effect_id, int ms, int flags) { return Nimbus_BurstEx(spawn_id < 0 ? 0u : (uint32_t)spawn_id, effect_id, ms, flags); }
+PLUGIN_API int rml_nimbus_burst_stop() { return Nimbus_BurstStop(); }
+PLUGIN_API const char* rml_nimbus_burst_status() { return Nimbus_BurstStatus(); }
+// t468 (feature 131072): NEW proc effects that are not in spellsnew.eff: emitters added to the client's emitter collection in
+// memory on first use, played with ids base_id + 1 .. base_id + count through rml_nimbus_burst(_ex). One status line.
+PLUGIN_API const char* rml_nimbus_custom_info() { return Nimbus_CustomInfo(); }
+// t469: Proc FX Brightness / Size (percent, 25..300) for the custom effects (written into their emitter records on the next play;
+// Brightness >= 150 also layers EQ's own records twice). Returns 1. Feature 262144.
+PLUGIN_API int rml_nimbus_custom_tune(int bright_pct, int size_pct) { return Nimbus_CustomTune(bright_pct, size_pct); }
 // ---------------------------------------------------------------------------------------------
 // Actor material tint (proof test, client-side only, local player). Calls EQGraphics' own
 // CActor::SetMaterialTint(int index, const RGB*) (vftable 0x228) in OnPulse; see ActorMaterial.cpp.

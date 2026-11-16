@@ -4,7 +4,7 @@
 -- ones back (1 Hz check, rate limited, gives up on a point after 3 failed tries until the next zone).
 local ffi = require('ffi')
 local C = require('combatfx.core')
-local M = { REV = 'orn1' }
+local M = { REV = 'orn1', PREVIEW_MS = 12000 }
 local FEAT_ORN = 8192
 
 -- saved per character in the CombatFX ini (core's flat serializer: one level of scalars)
@@ -25,6 +25,32 @@ M.SLOTS = {
 }
 M.SLOT = {}
 for _, s in ipairs(M.SLOTS) do M.SLOT[s.id] = s end
+
+-- shieldfix: a shield model must go on point 5 (on the arm), never a hand point (3 / 4 = held like a weapon).
+-- eqgame's own wear code (+0x306BB0) does this for the secondary slot: it asks +0x199A50 whether the model's
+-- Resources\ActorTagInfo.txt record (table at +0x140, loaded at +0x18BE34) has type 10; yes -> point 5 and point 4
+-- cleared, no -> point 4 (via +0x96D80) and point 5 cleared. ornament_shields.lua is that type-10 list for this client.
+local SHIELDS = nil
+local function shields()
+    if SHIELDS == nil then
+        local ok, t = pcall(require, 'combatfx.ornament_shields')
+        SHIELDS = (ok and type(t) == 'table' and type(t.set) == 'table') and t.set or false
+    end
+    return SHIELDS or {}
+end
+function M.is_shield(x)
+    local it = type(x) == 'table' and x.it or tonumber(tostring(x or ''):match('(%d+)'))
+    return it ~= nil and shields()[tonumber(it)] == true
+end
+M.HAND_PT, M.SHIELD_PT, M.MAIN_PT = 4, 5, 3
+-- where a held pick really goes: shields -> 'shield' (point 5); a weapon picked on the Shield tab -> 'secondary'
+function M.slot_for(e, slot_id)
+    local s = M.SLOT[slot_id]
+    if not (s and s.held and e) then return slot_id end
+    if M.is_shield(e) then return 'shield' end
+    if slot_id == 'shield' then return 'secondary' end
+    return slot_id
+end
 
 -- EQ race name -> NewArmorTagData race tag (male / female)
 local RACE = { Human = { 'HUM', 'HUF' }, Barbarian = { 'BAM', 'BAF' }, Erudite = { 'ERM', 'ERF' }, ['Wood Elf'] = { 'ELM', 'ELF' },
@@ -343,9 +369,24 @@ end
 function M.status() return st, st_raw end
 
 -- ---------------------------------------------------------------- saved swaps: "pt:IT####,pt:IT####"
+M._moved = {}           -- shieldfix: hand points that held a saved shield (put back by the next tick)
 function M.wanted()
     local w = {}
     for pt, tag in tostring(C.cfg.orn.set or ''):gmatch('(%d+):(IT%d+)') do w[tonumber(pt)] = tag end
+    -- shieldfix: a shield saved on a hand point (older builds sent it wherever the tab was) moves to point 5
+    local moved = false
+    for _, pt in ipairs({ M.MAIN_PT, M.HAND_PT }) do
+        if w[pt] and M.is_shield(w[pt]) then
+            if not w[M.SHIELD_PT] then w[M.SHIELD_PT] = w[pt] end
+            w[pt] = nil; M._moved[pt] = true; moved = true
+        end
+    end
+    if moved then
+        local o = {}
+        for pt, tag in pairs(w) do o[#o + 1] = string.format('%d:%s', pt, tag) end
+        table.sort(o)
+        C.cfg.orn.set = table.concat(o, ','); C.save_cfg()
+    end
     return w
 end
 local function save_wanted(w)
@@ -402,9 +443,18 @@ end
 function M.apply(e, slot_id)
     local ok, why = M.available()
     if not ok then return false, why end
+    slot_id = M.slot_for(e, slot_id)                                  -- shieldfix: shields on point 5
     local s = M.SLOT[slot_id]; if not s or not e then return false, 'bad slot' end
+    if M._pv and M._pv.slot == slot_id then M._pv = nil else M.preview_end(true) end   -- Apply keeps a preview on the same slot
     local w = M.wanted()
     local sent = {}
+    -- like eqgame: shield on 5 clears our left-hand piece on 4, a left-hand piece on 4 clears our shield on 5
+    local other = (slot_id == 'shield' and M.HAND_PT) or (slot_id == 'secondary' and M.SHIELD_PT) or nil
+    if other and w[other] then
+        w[other] = nil; tries[other] = nil
+        pcall(function() lib.rml_orn_restore(other) end)
+        sent[#sent + 1] = string.format('%d=real', other)
+    end
     for i, pt in ipairs(s.pts) do
         local it = (i == 1) and e.it or e.pair
         if it then
@@ -418,17 +468,61 @@ function M.apply(e, slot_id)
         end
     end
     save_wanted(w)
+    M.last_slot = slot_id
     local r, m = M.REGION[slot_id], e.mat or M.mat_for(e.group)
     if m and not M.mat_ok(m) then m = nil end                        -- allraces: no texture for this race -> leave the body as is
     if r and m then                                                  -- matfix
         local wm = M.wanted_mats(); wm[r] = m; save_mats(wm); mtries[r] = nil
         if send_mat(r, m) > 0 then sent[#sent + 1] = string.format('mat%d=%d', r, m) end
     end
-    return true, table.concat(sent, ' ')
+    return true, table.concat(sent, ' '), slot_id
 end
+
+-- live preview (same idea as the native aura picker): put the model on your character for PREVIEW_MS without saving
+-- it, then put back what was there (your saved ornament or your real gear). Apply during a preview keeps it.
+M._pv = nil              -- { pts = { [pt] = true }, slot =, it =, until_ms = }
+function M.preview(e, slot_id, ms)
+    local ok, why = M.available()
+    if not ok then return false, why end
+    slot_id = M.slot_for(e, slot_id)
+    local s = M.SLOT[slot_id]; if not s or not e then return false, 'bad slot' end
+    M.preview_end(true)
+    local pv = { pts = {}, slot = slot_id, it = e.it, until_ms = now() + (ms or M.PREVIEW_MS) }
+    for i, pt in ipairs(s.pts) do
+        local it = (i == 1) and e.it or e.pair
+        if it then
+            local rc = -99
+            pcall(function() rc = tonumber(lib.rml_orn_set(pt, 'IT' .. it)) or -99 end)
+            if rc <= 0 then
+                M._pv = pv; M.preview_end(true)
+                return false, ({ [-1] = 'disabled after a fault this session', [-2] = 'client build not verified', [-3] = 'bad point or tag', [-4] = 'queue full, try again' })[rc] or ('error ' .. rc)
+            end
+            pv.pts[pt] = true
+        end
+    end
+    M._pv = pv
+    return true, slot_id
+end
+-- end the preview: each point goes back to its saved ornament, or the real gear (restore)
+function M.preview_end(quiet)
+    local pv = M._pv; if not pv then return false end
+    M._pv = nil
+    local w = M.wanted()
+    for pt in pairs(pv.pts) do
+        if w[pt] then tries[pt] = { n = 0 }; send(pt, w[pt])
+        elseif lib then pcall(function() lib.rml_orn_restore(pt) end) end
+    end
+    return true
+end
+function M.preview_left()
+    if not M._pv then return 0 end
+    return math.max(0, math.ceil((M._pv.until_ms - now()) / 1000))
+end
+function M.previewing(it) return M._pv ~= nil and (it == nil or M._pv.it == it) end
 
 function M.restore_slot(slot_id)
     local s = M.SLOT[slot_id]; if not s then return false end
+    M.preview_end(true)
     local w = M.wanted()
     for _, pt in ipairs(s.pts) do
         w[pt] = nil; tries[pt] = nil
@@ -443,6 +537,7 @@ function M.restore_slot(slot_id)
     return true
 end
 function M.restore_all()
+    M._pv = nil
     tries = {}; mtries = {}
     C.cfg.orn.set = ''; C.cfg.orn.mat = ''; C.save_cfg()
     if lib and avail then pcall(function() lib.rml_orn_restore(-1) end) end
@@ -494,8 +589,14 @@ function M.filter(slot_id, kind, q)
     local out = {}
     for _, e in ipairs(d.list) do
         local okslot = s and ((s.held and e.slot == 'held') or (not s.held and e.slot == s.id))
+        if okslot and s.held then                                     -- shieldfix: Primary = no shields, Shield = only shields
+            local sh = M.is_shield(e)
+            if (slot_id == 'primary' and sh) or (slot_id == 'shield' and not sh) then okslot = false end
+        end
         if okslot then
-            local okk = kind == 'all' or (kind == 'fav' and fav[e.it]) or (kind == 'prt' and e.prt) or e.shape == kind
+            local sh = s.held and M.is_shield(e)
+            local okk = kind == 'all' or (kind == 'fav' and fav[e.it]) or (kind == 'prt' and e.prt)
+                or (kind == 'sh' and sh) or (kind == 'w' and not sh and e.shape ~= 'o') or (kind == 'o' and not sh and e.shape == 'o')
             if okk and (q == '' or e.key:find(q, 1, true)) then out[#out + 1] = e end
         end
     end
@@ -522,7 +623,12 @@ function M.tick()
     local t = now()
     if t < next_tick then return end
     next_tick = t + 1000
+    if M._pv and t >= M._pv.until_ms then M.preview_end(true) end
     local w = M.wanted()
+    if next(M._moved) ~= nil and lib and M.available() then                -- shieldfix: hand point that held a shield
+        for pt in pairs(M._moved) do if not w[pt] then pcall(function() lib.rml_orn_restore(pt) end) end end
+        M._moved = {}
+    end
     if next(w) == nil and not M.watching then return end
     if not M.available() then return end
     if not in_game() then return end
@@ -533,6 +639,7 @@ function M.tick()
     for pt, tag in pairs(w) do
         local p = st.pts[pt]
         local tr = tries[pt]
+        if M._pv and M._pv.pts[pt] then p = nil end                   -- being previewed: leave it alone
         if p and p.tag ~= tag then
             if tr and tr.sent and tr.tag == tag and t - tr.sent > 2500 and not tr.counted then
                 tr.n = (tr.n or 0) + 1; tr.counted = true            -- the last try did not stick
@@ -555,6 +662,7 @@ end
 
 -- CombatFX stopping: put the real gear back unless the user chose to keep swaps until zoning
 function M.shutdown()
+    if M._pv then M.preview_end(true) end
     if C.cfg.orn.keep == true then return end
     if lib and avail and next(M.wanted()) ~= nil then pcall(function() lib.rml_orn_restore(-1) end) end
 end

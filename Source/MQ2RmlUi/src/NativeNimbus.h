@@ -14,3 +14,17 @@ const char* Nimbus_Status();             // one line, for logs / Lua (slot 0)
 int  Nimbus_AddSlot(int slot, int effectId, int flags);
 int  Nimbus_RemoveSlot(int slot);
 const char* Nimbus_StatusSlot(int slot);
+// proc burst (feature 65536): one short native effect on any spawn (spawnId 0 = you), removed after ms (300..8000).
+// > 0 queued; -1 disabled, -2 not verified, -3 bad id, -5 that id is worn on you in slot 0/1, -6 bad spawn id
+int  Nimbus_Burst(uint32_t spawnId, int effectId, int ms);
+// flags 1 = preview: when the target cannot take it, play it on you instead (status fell=1)
+int  Nimbus_BurstEx(uint32_t spawnId, int effectId, int ms, int flags);
+int  Nimbus_BurstStop();
+const char* Nimbus_BurstStatus();
+// t468 custom proc effects (feature 131072): ids CustomFx::kBaseId + 1 .. + kEffects play through Nimbus_Burst / _BurstEx
+// (-7 = custom effects off). Available = client verified + the three extra signatures match.
+bool Nimbus_CustomAvailable();
+bool Nimbus_LevelBypass();               // t472: our effects ignore EQ's Spell Particle Density / Opacity (feature 524288)
+int Nimbus_CustomTune(int brightPct, int sizePct);   // t469: Proc FX Brightness / Size (percent) for the custom records (+ stock layering >= 150)
+const char* Nimbus_CustomInfo();          // "tag=.. base_id=.. count=.. ready=.. base=.. why=.."
+

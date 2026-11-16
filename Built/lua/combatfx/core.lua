@@ -46,7 +46,11 @@ function W:anim(id, name, dur, ease)
     local s = (self.cache[k] == 'a') and 'b' or 'a'; self.cache[k] = s
     self:style(id, 'animation', string.format('%.2fs %s 1 %s_%s', dur, ease or 'cubic-out', name, s))
 end
-function W:show(on) on = on ~= false; if self.visible == on then return end; self.visible = on; C.writes = C.writes + 1; pcall(function() self.win:show(on) end) end
+function W:show(on)
+    on = on ~= false; if self.visible == on then return end; self.visible = on
+    if C.suspended then return end                    -- lf1: out of the world: remember the wish, show nothing
+    C.writes = C.writes + 1; pcall(function() self.win:show(on) end)
+end
 function W:place(x, y, w, h) C.writes = C.writes + 1; pcall(function() self.win:place(x, y, w, h) end) end
 function W:value(id) return C.str(function() return self.win:value(id) end, '') end
 
@@ -155,6 +159,40 @@ function C.poll()
         end
     end
 end
+-- ---------------------------------------------------------------- lf1: idle outside the world
+-- At the login / server / character select screens (EverQuest.GameState ~= INGAME) CombatFX hides every window it owns
+-- (nothing over Enter World, nothing taking the mouse or keyboard), stops its per-frame work (no Me / Target / Spawn
+-- reads, no GPU effects) and only keeps polling its windows so the plugin does not auto-close them. Back in the
+-- world everything comes back as it was. GameState missing / unreadable (tests, old MQ) counts as in the world.
+C.suspended = false
+C.GS_MS = 250
+local gs_t, gs_v = -1e9, true
+function C.in_world()
+    local now = C.now()
+    if now - gs_t < C.GS_MS then return gs_v end
+    gs_t = now
+    local ok, gs = pcall(function() return mq.TLO.EverQuest.GameState() end)
+    gs_v = (not ok) or gs == nil or gs == '' or gs == 'INGAME'
+    C.gamestate = ok and gs or nil
+    return gs_v
+end
+function C.reset_world_cache() gs_t = -1e9 end
+function C.suspend(on)
+    on = on and true or false
+    if on == C.suspended then return end
+    C.suspended = on
+    for _, p in ipairs(C.order) do
+        local vis = (not on) and p.visible
+        pcall(function() p.win:show(vis) end)
+    end
+    C.suspend_changes = (C.suspend_changes or 0) + 1
+end
+-- one call per frame / tick: true = do the normal work, false = idle (windows hidden, only C.poll)
+function C.world_gate()
+    local inw = C.in_world()
+    C.suspend(not inw)
+    return inw
+end
 function C.close_all() for _, p in ipairs(C.order) do pcall(function() p.win:close() end) end; C.order, C.wins = {}, {} end
 
 -- ---------------------------------------------------------------- settings
@@ -220,6 +258,7 @@ C.cfg.fxstyle = {
 }
 C.cfg.feetaura = { on = true, style = 'inferno' }
 C.cfg.naura = { id = 0, prev = 0 }                 -- t436: native EQ ground aura id (0 = none; old feet disc is used)
+C.cfg.nproc = { mode = 'auto', id = 0, where = 'target' }   -- t464: native EQ proc effects (auto by element / pick / off = old screen look)
 C.AURA_SHOWPIECES = {
     { id = 'sigil',    label = 'Sigil',    desc = 'Rotating rune rings and rising motes' },
     { id = 'magma',    label = 'Magma',    desc = 'Lava fissures and ember columns' },
@@ -230,7 +269,8 @@ C.AURA_SHOWPIECES = {
     { id = 'miasma',   label = 'Miasma',   desc = 'Toxic pool, bubbles and spores' },
     { id = 'ritual',   label = 'Ritual',   desc = 'Blood sigil with a dripping pulse' },
 }
-C.cfg.runtrail = { on = true, style = 'inferno' }
+C.cfg.nav = { top = 'vis', vis = 'styles', set = 'events', zm = 'mark' }   -- t494: settings nav: last group + last page per group
+C.cfg.runtrail = { on = true, style = 'inferno', id = 0 }   -- t485: id = native trail record (0 = from style; trails.lua)
 C.BODY_STYLES = {
     { id = 'inferno', label = 'Inferno', desc = 'Flames rising beside you, not over you' },
     { id = 'frost',   label = 'Frost',   desc = 'Mist and ice glints along your outline' },

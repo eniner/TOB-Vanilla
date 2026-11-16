@@ -212,6 +212,13 @@ function M.crit_flash()
 end
 function M.burst(rt, handler, line)
     if not O or not C.cfg.master or not C.cfg.fx.burst or C.cfg.lite or not C.particles_on() then return end
+    -- t464: native proc effect: EQ wraps the target's (or your) body in a real spell-hit record in the 3D world;
+    -- nothing is drawn on the screen then. Off / unavailable / refused -> the old screen-drawn burst below.
+    local PF = package.loaded['combatfx.procfx']
+    if PF and PF.fire then
+        local ok, owned = pcall(PF.fire, 'proc', rt)
+        if ok and owned then return end
+    end
     local x, y = target_xy()
     O:style('burst', 'left', math.floor(x) .. 'px'); O:style('burst', 'top', math.floor(y) .. 'px')
     O:anim('burst', 'burst', 0.5, 'cubic-out'); mark('burst', 0.5); wake(0.55)
@@ -322,6 +329,8 @@ function M.preview_style(style, kind)
         return
     end
     if kind == 'trail' then
+        local NT = package.loaded['combatfx.trails']     -- t485: native foot trail preview when the DLL has slot 2
+        if NT and NT.native and NT.native() and NT.D.by_style[style] then pcall(NT.preview, NT.D.by_style[style].id); return end
         if CV then pcall(function() CV.preview_trail(style) end) end
         if O then wake(2.2) end
         return

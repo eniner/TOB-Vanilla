@@ -77,7 +77,7 @@ function FL.ab_name(ev)
     if ev.cat == 'melee' or (ev.verb and not ev.sp and not ev.spell) then return melee_ab(ev.verb) end
     if ev.sp and ev.sp ~= '' then return clean(ev.sp) end
     if ev.cat == 'dot' then return 'DoT (unnamed)' end
-    return (ev.k == 'odmg' and not ev.spell) and 'Melee' or 'Spell (unnamed)'   -- TOB: "Mychar hit X for N points of non-melee damage." names no spell
+    return (ev.k == 'odmg' and not ev.spell) and 'Melee' or 'Spell (unnamed)'   -- TOB: "Pegoca hit X for N points of non-melee damage." names no spell
 end
 local function srcrow(name)
     local s = D.src[name]

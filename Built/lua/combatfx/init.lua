@@ -14,6 +14,8 @@ local TR = require('combatfx.tracker')
 local AD = require('combatfx.addons')
 local NB = require('combatfx.nimbus')   -- t362: native EQ nimbus (Body FX)
 local NA = require('combatfx.aura')     -- t436: native EQ ground aura (Aura tab, native slot 1)
+local NT = require('combatfx.trails')   -- t485: native EQ foot trails (Trail tab, native slot 2)
+local PF = require('combatfx.procfx')   -- t464: native EQ proc effects on the target's body (Proc FX tab)
 local OR = require('combatfx.ornament') -- orn1: ornament model swaps (Ornaments tab)
 local PS = require('combatfx.parses')   -- f8b: history, group meter, death recap, mob warnings, export
 local LO = require('combatfx.loadout')  -- f8b: one-click loadouts
@@ -132,6 +134,7 @@ fxlog(string.format('CHAT path=%s registered=%s', tostring(E._chat), tostring(E.
 local STEPS = { { 'poll', C.poll }, { 'sim', SIM.frame }, { 'process', E.process }, { 'watch', E.watch }, { 'fx', FX.frame },
     { 'ui', UI.frame }, { 'tracker', TR.poll }, { 'addons', AD.poll }, { 'parses', PS.frame }, { 'track', TK.frame }, { 'save', C.save_tick } }
 local function frame()
+    if not C.world_gate() then C.guard('poll', C.poll); return end   -- lf1: login / char select: hidden and idle
     for _, s in ipairs(STEPS) do C.guard(s[1], s[2]) end
 end
 
@@ -140,6 +143,8 @@ local function cleanup()
     if cleaned then return end; cleaned = true
     pcall(NB.shutdown)            -- t362: take the native nimbus off when CombatFX stops
     pcall(NA.shutdown)            -- t436: and the native aura
+    pcall(NT.shutdown)            -- t485: and the native foot trail
+    pcall(PF.shutdown)            -- t464: and a native proc effect still playing
     pcall(OR.shutdown)            -- orn1: real gear back when CombatFX stops (unless 'Keep on stop')
     pcall(E.unregister)
     pcall(TR.unregister)
@@ -158,11 +163,14 @@ mq.imgui.init('combatfx', function() local ok, e = pcall(frame); if not ok then 
 print(string.format('%sloaded for %s (%d chat events). Click the FX button for settings, right-click for the menu.', C.TAG, C.CHAR, E.registered))
 while running do
     mq.doevents()
-    C.guard('process', E.process)   -- drain chat even if the ImGui callback hiccups
-    C.guard('nimbus', NB.tick)      -- t362: re-apply the saved nimbus once in game, read its status (1 Hz)
-    C.guard('naura', NA.tick)       -- t436: native aura: re-apply / pause with particles / preview timeout (1 Hz)
-    C.guard('orn', OR.tick)         -- orn1: put saved ornaments back after zoning / gear changes (1 Hz, rate limited)
-    C.guard('track slow', TK.slow)  -- f10: spells_us.txt read 600 lines per tick until done (mana / durations / feign)
+    if C.world_gate() then              -- lf1: none of this at the login / character select screens
+        C.guard('process', E.process)   -- drain chat even if the ImGui callback hiccups
+        C.guard('nimbus', NB.tick)      -- t362: re-apply the saved nimbus once in game, read its status (1 Hz)
+        C.guard('naura', NA.tick)       -- t436: native aura: re-apply / pause with particles / preview timeout (1 Hz)
+        C.guard('ntrail', NT.tick)      -- t485: native foot trail: same, native slot 2
+        C.guard('orn', OR.tick)         -- orn1: put saved ornaments back after zoning / gear changes (1 Hz, rate limited)
+        C.guard('track slow', TK.slow)  -- f10: spells_us.txt read 600 lines per tick until done (mana / durations / feign)
+    end
     mq.delay(50)
 end
 cleanup()

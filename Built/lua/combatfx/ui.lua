@@ -8,6 +8,7 @@ local SIM = require('combatfx.sim')
 local TR = require('combatfx.tracker')
 local NB = require('combatfx.nimbus')     -- t362: native EQ nimbus picker (Body FX tab)
 local NA = require('combatfx.aura')       -- t436: native EQ ground aura picker (Aura tab)
+local PF = require('combatfx.procfx')     -- t464: native EQ proc effects picker (Proc FX tab)
 local OR = require('combatfx.ornament')   -- orn1: client-side ornament model swaps (Ornaments tab)
 local FT = require('combatfx.features')  -- f8: Combat+ and Alerts tabs, share strings, perf tier, min text size
 local TFX = nil                          -- tfx1: DX11 theme looks + animated card previews (optional)
@@ -359,10 +360,293 @@ local function style_card(which, st, i, selected)
         end),
         st.id, C.esc(st.label), selected and '<span class="stytag">SELECTED</span>' or '')
 end
+-- ---- t464: native EQ proc effects (rml_nimbus_burst): EQ's own spell-hit records played on a body --------------
+local NP = { cat = 'all', sub = 'all', pg = 1, PER = 60, MAXONE = 120, sel = nil, eid = {} }   -- eid: card -> its element id on the current page   -- one local (ui.lua is at Lua's 200-locals limit)
+NP.SF = require('combatfx.spellfx')   -- t470: Spell assignments + effect numbers (kept in NP: no new ui.lua local)
+NP.q, NP.view, NP.det, NP.sv, NP.ak = '', 'grid', false, 'all', nil   -- search, view (grid / gems), Details open, seen filter, entry being edited
+-- t470: the status flickered: the debug counters (left_ms, alive ...) changed every 0.5 s and wrapped to a different
+-- number of lines, so the whole page jumped. Now: one fixed-height line (no counters), raw details only when opened.
+NP.STAT_STYLE = 'height: 18px; white-space: nowrap; overflow: hidden; font-size: 12px; color: #ece8fa;'
+function NP.status_html()
+    local f = PF.status_text()
+    f = tostring(f or ''):gsub(' &#183; %d+ emitters', '')
+    return f
+end
+-- raw debug details (Details open only): the counters that tick every frame are dropped, so it changes on events only
+function NP.strip_raw(raw)
+    raw = tostring(raw or '')
+    raw = raw:gsub(' ?left_ms=%-?%d+', ''):gsub(' ?alive=%-?%d+', ''):gsub(' ?attached=%-?%d+', ''):gsub(' ?owner_ok=%-?%d+', '')
+    return C.esc(raw)
+end
+function NP.det_html(raw) return '<span class="dim" style="font-size: 9px;">' .. NP.strip_raw(raw) .. '</span>' end
+function NP.det_box(id, raw, open, fn)
+    return '<div class="mknav" style="margin: -4px 0px 4px 0px;">' .. btn(open and '&#9662; Hide details' or '&#9656; Details', fn, 'sm') .. '</div>' ..
+        (open and string.format('<div class="card" id="%s" style="height: 46px; overflow: hidden;">%s</div>', id, NP.det_html(raw)) or '')
+end
+-- seed the diff cache with what the page just drew (the page itself is one big write)
+function NP.seed(id, html) ST.cache['r' .. id] = html end
+function NP.sel_html()
+    if NP.sel == 'auto' then return '<span style="color: #ece8fa; font-weight: bold;">Auto</span> <span class="dim">&#183; each proc plays the new effect for its element (fire, cold, poison, disease, magic, shadow, holy, lifetap ...); press Preview, then Use</span>' end
+    local n = NP.sel and PF.D.by_id[NP.sel]
+    if not n then return '<span class="dim">Click a picture to select it, then Preview to see it on your target (or you); Use keeps it for every proc</span>' end
+    if n.custom then   -- t468: a NEW effect (not in EQ's files)
+        return string.format('<span style="color: #ece8fa; font-weight: bold;">%s %s</span> <span class="dim">&#183; NEW &#183; %s &#183; EQ textures: %s</span>', NP.SF.num(n.id), C.esc(n.name), n.desc, C.esc(n.tex))
+    end
+    return string.format('<span style="color: #ece8fa; font-weight: bold;">%s %s</span> <span class="dim">&#183; Stock EQ #%d &#183; record %s &#183; %s &#183; textures: %s</span>',
+        NP.SF.num(n.id), C.esc(n.name), n.id, C.esc(n.raw), n.desc, C.esc(n.tex))
+end
+function NP.refresh()
+    if not (ST and ST.visible and tab == 'styles') then return end
+    if NP.view == 'grid' then
+        ST:rml('npstat', NP.status_html())          -- ST:rml is diffed: only a changed line is written
+        ST:rml('npsel', NP.sel_html())
+        local t = C.now()
+        if NP.det and t >= (NP.det_t or 0) then NP.det_t = t + 1000; local _, raw = PF.status_text(); ST:rml('npdet', NP.det_html(raw)) end
+    else NP.sa_refresh() end
+    NP.poll()
+end
+-- t465: one Preview for both buttons (the green header Preview runs this on the Proc FX tab, not the theme showcase)
+function NP.preview()
+    local ok, why = PF.available()
+    if not ok then msg = 'Native proc effects unavailable: ' .. tostring(why); return render() end
+    local c = PF.cfg()
+    local sel = NP.sel or ((c.mode == 'pick' and PF.D.by_id[c.id]) and c.id or 'auto')
+    NP.sel = sel
+    local okp, w, ms = PF.preview(sel == 'auto' and 0 or sel)
+    local n = PF.D.by_id[sel == 'auto' and PF.pick_id('proc', 'Fire') or sel]
+    msg = okp and string.format('Previewing %s on %s for %.1f s - watch the body; the status line says where it played', n and n.name or 'Auto', tostring(w), (ms or 0) / 1000)
+        or ('Could not preview: ' .. tostring(w))
+    render()
+end
+-- t467: ~110 cards: a click only moves the 'sel' class and rewrites the selection line (no page rebuild)
+function NP.select(id, label)
+    local prev = NP.sel
+    NP.sel = id                                  -- select only: previews play from the Preview button
+    msg = 'Selected ' .. label .. ' - press Preview to play it on your target (or you), Use keeps it'
+    if ST and ST.visible and tab == 'styles' then
+        if prev ~= nil and prev ~= id and NP.eid[prev] then ST:class(NP.eid[prev], 'sel', false) end
+        if NP.eid[id] then ST:class(NP.eid[id], 'sel', true) end
+        ST:rml('npsel', NP.sel_html()); ST:text('smsg', msg)
+    else render() end
+end
+function NP.card(id, img, label, i, cur, dis)
+    local tag = cur and '<span class="stytag">IN USE</span>' or ''
+    local attrs = dis and ' style="opacity: 0.45;"' or A(function() NP.select(id, label) end)
+    NP.eid[id] = attrs:match(' id="([^"]+)"')      -- the card's own element id (A() gives every clickable one)
+    return string.format('<div class="styc%s%s"%s><img class="styi" src="../img/thumbnp_%s.png"/><span class="styn">%s</span>%s</div>',
+        i % 4 == 0 and ' c4' or '', (NP.sel == id) and ' sel' or '', attrs, img, C.esc(label), tag)
+end
+-- t469: chips that wrap onto more rows (the one-line seg ran out of room: Stock EQ was cut off)
+function NP.chips(opts, cur, fn)
+    local o = {}
+    for _, p in ipairs(opts) do
+        o[#o + 1] = string.format('<div class="sg%s" style="margin: 0px 4px 4px 0px; border: 1px #ffffff14; background-color: #08070fd0;"%s>%s</div>',
+            cur == p[1] and ' sel' or '', A(function() fn(p[1]) end), p[2])
+    end
+    return '<div style="white-space: normal; margin-bottom: 4px;">' .. table.concat(o) .. '</div>'
+end
+-- t469: hundreds of Stock EQ cards: NP.PER per page (keeps the page fast and the loaded pictures bounded)
+function NP.pager(total)
+    local pages = (total <= NP.MAXONE) and 1 or math.ceil(total / NP.PER)   -- up to 120 on one page, else pages of 60
+    if NP.pg > pages then NP.pg = pages end
+    if NP.pg < 1 then NP.pg = 1 end
+    if pages <= 1 then return '' end
+    local function pb(label, to, on)
+        if not on then return string.format('<div class="btn sm" style="opacity: 0.35;">%s</div>', label) end
+        return btn(label, function() NP.pg = to; render() end, 'sm')
+    end
+    return '<div class="mknav" style="margin: 2px 0px 6px 0px;">' .. pb('&#9664; Prev', NP.pg - 1, NP.pg > 1) ..
+        string.format('<span class="dim" style="font-size: 11px; padding: 0px 10px;">Page %d of %d &#183; %d effects</span>', NP.pg, pages, total) ..
+        pb('Next &#9654;', NP.pg + 1, NP.pg < pages) .. '</div>'
+end
+function NP.page(r)
+    local ok, why = PF.available()
+    local c = PF.cfg()
+    r[#r + 1] = '<div class="sec">NATIVE PROC EFFECTS &#183; <span class="dim">new spell effects built on EQ\'s own textures (spirals, vortices, shock rings, rain, orbits), played by the client on the body in the world like its own; they wrap the body and keep their size when the camera moves; only you see them. EQ\'s own records are under Stock EQ</span></div>'
+    if not ok then
+        r[#r + 1] = '<div class="card"><span class="wn" style="font-size: 12px;">Native proc effects unavailable</span><br/><span class="dim" style="font-size: 11px;">' .. C.esc(why) .. '. The screen-drawn look below is used until then.</span></div>'
+    end
+    local sh = NP.status_html(); NP.seed('npstat', sh)
+    r[#r + 1] = '<div class="card" id="npstat" style="' .. NP.STAT_STYLE .. '">' .. sh .. '</div>'
+    do local _, raw = PF.status_text(); local dh = NP.det_html(raw); if NP.det then NP.seed('npdet', dh) end
+        r[#r + 1] = NP.det_box('npdet', raw, NP.det, function() NP.det = not NP.det; render() end) end
+    local dis = not ok
+    NP.give_bar(r, dis)
+    r[#r + 1] = row('Native proc effects', 'Play procs as EQ effects on the body (off = the old screen-drawn look below)',
+        sw(c.mode ~= 'off', function() PF.set_mode(c.mode == 'off' and ((PF.D.by_id[c.id] and 'pick') or 'auto') or 'off'); msg = PF.on() and 'Native proc effects on' or 'Native proc effects off: screen-drawn look'; changed(false) end))
+    r[#r + 1] = row('Show on', 'Whose body the effect wraps (no target: you)',
+        seg({ { 'target', 'Your target' }, { 'self', 'You' } }, c.where, function(w) PF.set_where(w); changed(false) end))
+    local function b(label, fn, cls) if dis then return string.format('<div class="btn %s" style="opacity: 0.4;">%s</div>', cls or '', label) end; return btn(label, fn, cls) end
+    r[#r + 1] = '<div class="mknav">' ..
+        b('&#9654;&#160; Preview', function() NP.preview() end, 'sm') ..
+        b('&#10003;&#160; Use for procs', function()
+            if not NP.sel then msg = 'Click a picture first'; return render() end
+            if NP.sel == 'auto' then PF.set_mode('auto'); msg = 'Procs: Auto (record by element)'
+            else local oku, w = PF.use(NP.sel); msg = oku and ('Procs: ' .. PF.D.by_id[NP.sel].name .. ' (saved)') or ('Could not use: ' .. tostring(w)) end
+            render()
+        end, 'sm pri') .. '</div>'
+    local slh = NP.sel_html(); NP.seed('npsel', slh)
+    r[#r + 1] = '<div style="height: 22px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; font-size: 11px;" id="npsel">' .. slh .. '</div>'
+    local segs = {}
+    local catname = 'All new'
+    for _, cc in ipairs(PF.D.cats) do segs[#segs + 1] = { cc[1], cc[2] }; if cc[1] == NP.cat then catname = cc[2] end end
+    r[#r + 1] = NP.chips(segs, NP.cat, function(cc) NP.cat = cc; NP.pg = 1; render() end)
+    if NP.cat == 'stock' then   -- t469: Stock EQ sub-groups
+        local ss = {}
+        for _, cc in ipairs(PF.D.stock_cats) do ss[#ss + 1] = { cc[1], cc[2] }; if cc[1] == NP.sub and cc[1] ~= 'all' then catname = 'Stock EQ &#183; ' .. cc[2] end end
+        r[#r + 1] = '<div style="padding-left: 10px; border-left: 2px #b090ff50; margin-bottom: 4px;">' ..
+            NP.chips(ss, NP.sub, function(cc) NP.sub = cc; NP.pg = 1; render() end) .. '</div>'
+    end
+    local shown = PF.filter(NP.cat, NP.sub)
+    local cok, cwhy = PF.custom_available()
+    if NP.q ~= '' then   -- t470: search by number (#12 = NEW 12, E317 = Stock EQ 317, 12 = both) or by name / element / texture
+        local s0 = PF.s0_available()
+        shown = {}
+        for _, n in ipairs(NP.SF.search(NP.q, cok)) do if s0 or not n.s0 then shown[#shown + 1] = n end end
+        catname = 'Search &#8220;' .. C.esc(NP.q) .. '&#8221;'
+        r[#r + 1] = '<div class="mknav" style="margin-bottom: 4px;">' .. btn('&#215;&#160; Clear search', function() NP.q = ''; NP.pg = 1; NP.input(true); render() end, 'sm') .. '</div>'
+    end
+    r[#r + 1] = string.format('<div style="font-size: 11px; color: #ece8fa; margin-bottom: 2px;">%s &#183; <span class="dim">%s</span></div>', catname,
+        (NP.q ~= '') and (#shown .. ' found &#183; type in the box below: #12 = NEW effect 12, E317 = Stock EQ record 317, or a name') or (NP.cat == 'stock') and (#shown .. ' of EQ\'s own spell effect records (the client\'s spellsnew.eff; hand-picked ones first)') or (NP.cat == 'all') and
+        string.format('%d new effects + Auto in %d elements; Stock EQ has %d EQ records', #shown, #PF.D.cats - 2, PF.D.STOCK_COUNT) or (#shown .. ' new effects'))
+    if not cok and NP.cat ~= 'stock' then r[#r + 1] = '<div class="wn" style="font-size: 10px; margin-bottom: 4px;">' .. C.esc(cwhy) .. '</div>' end
+    r[#r + 1] = '<div class="dim" style="font-size: 10px; margin-bottom: 4px;">' .. ((NP.cat == 'stock') and 'Pictures are offline renders of each EQ record (its real textures, shapes and colours); in game EQ animates them on the body.'
+        or 'Pictures are offline renders simulated from the exact emitter data MQ2RmlUi adds to the client (EQ textures, shapes, motion); in game EQ animates them on the body.') .. ' Size and Brightness below also drive the native effects (new effects: particle size, count, colour and opacity; Brightness 150% and up plays EQ records twice, layered); Duration sets how long one stays.</div>'
+    r[#r + 1] = '<div class="dim" style="font-size: 10px; margin-bottom: 4px;">Every effect has a number: NEW effects #1-#100, EQ records E + record id. Search them in the box at the bottom (number or name).</div>'
+    r[#r + 1] = '<div class="clr"></div>'
+    local i = 1
+    NP.eid = {}
+    local pager = NP.pager(#shown)
+    r[#r + 1] = pager
+    if NP.cat == 'all' and NP.pg == 1 and NP.q == '' then r[#r + 1] = NP.card('auto', 'auto', 'Auto (by element)', i, c.mode == 'auto', dis); i = i + 1 end
+    local per = (#shown <= NP.MAXONE) and #shown or NP.PER
+    for k = (NP.pg - 1) * per + 1, math.min(#shown, NP.pg * per) do
+        local n = shown[k]
+        r[#r + 1] = NP.card(n.id, tostring(n.id), NP.SF.num(n.id) .. '  ' .. n.name, i, c.mode == 'pick' and c.id == n.id, dis); i = i + 1
+    end
+    r[#r + 1] = '<div class="clr"></div>'
+    if pager ~= '' then r[#r + 1] = NP.pager(#shown) end
+end
+-- ---- t472: Spell Gems & Procs = ONE plain list: Gem 1..N, then Primary / Secondary / Range proc; type a number ----------
+NP.rows = {}             -- row index -> entry key ('@gem3', '@primary' ...); inputs sfn<i>, picture+name sfl<i>, spell name sfnm<i>
+function NP.viewbar()
+    local function tabb(v, label)
+        local on = NP.view == v
+        return string.format('<div class="btn%s" style="margin: 0px 6px 0px 0px; padding: 6px 14px; font-size: 13px;%s"%s>%s</div>', on and ' pri' or '',
+            on and '' or ' opacity: 0.8;', A(function() NP.view = v; NP.ak = nil; NP.input(); render() end), label)
+    end
+    return '<div class="mknav" style="margin: 0px 0px 8px 0px;">' .. tabb('grid', '&#10022;&#160; Effects (numbered)') ..
+        tabb('gems', '&#9733;&#160; Spell Gems &amp; Procs') .. '</div>'
+end
+function NP.input(keep)
+    if not ST then return end
+    in_mode = 'npq'; M.set_input('Search effects', keep and '' or NP.q)
+    ST:text('inhint', '#12 = NEW effect 12, E317 = EQ record 317, or a name (fire, helix ...); filters as you type')
+end
+function NP.poll()
+    if in_mode == 'npq' and NP.view == 'grid' then
+        local v = ST:value('inp')
+        if v ~= NP.q then NP.q = v; NP.pg = 1; render() end
+    end
+end
+function NP.apply(v)
+    NP.q = tostring(v or ''); NP.pg = 1; render()
+end
+function NP.eff_label(id)
+    local n = PF.D.by_id[id or 0]
+    if not n then return '' end
+    return string.format('<img src="../img/thumbnp_%d.png" style="width: 48px; height: 30px; margin: 0px 6px -9px 0px;"/>%s %s', id, NP.SF.num(id), C.esc(n.name))
+end
+function NP.plain(id) local n = PF.D.by_id[id or 0]; return n and (NP.SF.num(id) .. ' ' .. n.name) or 'Auto' end
+-- the spell / proc name a row stands for right now (gem slot or weapon slot)
+function NP.row_spell(key)
+    local gi = tonumber(key:match('^@gem(%d+)$'))
+    if gi then local g = NP.SF.gems(); return g[gi] end
+    return NP.SF.slot_procs()[key]
+end
+-- t489: Set = read THIS row's box, check it, save to the spellfx ini at once, show it back in the box
+function NP.box_val(id)
+    id = tonumber(id) or 0
+    if id == 0 then return '' end
+    return (NP.SF.num(id):gsub('^#', ''))
+end
+function NP.num_typed(i, v)
+    local key = NP.rows[i]; if not key then return end
+    local SF = NP.SF
+    v = tostring(v or ''):gsub('^%s+', ''):gsub('%s+$', '')
+    if v == '' then
+        if SF.get(key) then SF.set(key, 'id', 0) end
+        SF.save_now(); msg = NP.rowname(key) .. ': cleared (saved)'
+        return render()
+    end
+    local a, why = SF.assign_num(key, v)
+    if not a then msg = NP.rowname(key) .. ': "' .. C.esc(v) .. '" is not an effect number (1-100, or E and an EQ record)'; ST:text('smsg', msg); return end
+    a.on, a.land = true, true
+    if not SF.on then SF.set_on(true) end
+    SF.save_now()
+    msg = NP.rowname(key) .. ' = ' .. NP.box_val(a.id) .. ' (saved)'
+    render()
+    return a
+end
+function NP.rowname(key)
+    local gi = key:match('^@gem(%d+)$'); if gi then return 'Gem ' .. gi end
+    for _, s in ipairs(NP.SF.SLOTS) do if s.key == key then return s.label end end
+    return key
+end
+function NP.row_html(i, key, empty_txt, dis)
+    local SF = NP.SF
+    NP.rows[i] = key
+    local a = SF.get(key)
+    local nm = NP.row_spell(key)
+    -- t489: no class="text" on the box (cfxui.rcss input.text = position: absolute -> every row's box stacked at the top-left)
+    return string.format('<div style="height: 32px; line-height: 28px; white-space: nowrap; border-bottom: 1px #ffffff10; padding: 2px 0px;">' ..
+        '<span style="display: inline-block; width: 110px; font-size: 13px; color: #ece8fa; font-weight: bold;">%s</span>' ..
+        '<span id="sfnm%d" style="display: inline-block; width: 200px; font-size: 13px; overflow: hidden;">%s</span>' ..
+        '<input type="text" id="sfn%d" value="%s" style="display: inline-block; position: relative; left: 0px; top: 0px; width: 70px; height: 22px; line-height: 20px; font-size: 13px; color: #ffffff; background-color: #0b0a16; border: 1px #b090ff; padding: 1px 6px; margin: 0px 8px 0px 0px; vertical-align: middle;"/>' ..
+        '%s %s</div>',
+        NP.rowname(key), i, nm and C.esc(nm) or ('<span class="dim">' .. empty_txt .. '</span>'),
+        i, NP.box_val(a and a.id),
+        btn('Set', function() NP.num_typed(i, ST:value('sfn' .. i)) end, 'sm'),
+        dis and '' or btn('&#9654;', function()
+            local cur = SF.get(key)
+            if not cur or (cur.id or 0) == 0 then msg = NP.rowname(key) .. ': type a number and press Set first'; ST:text('smsg', msg); return end
+            local okp, w = SF.preview(cur, NP.row_spell(key)); msg = okp and ('Previewing ' .. NP.plain(cur.id)) or ('Could not preview: ' .. tostring(w)); ST:text('smsg', msg)
+        end, 'sm'))
+end
+-- names follow the gems / weapons live (only the name spans are rewritten: no page rebuild, no flicker)
+function NP.sa_refresh()
+    local t = C.now()
+    if t < (NP.sa_next or 0) then return end
+    NP.sa_next = t + 1000
+    local _, n = NP.SF.gems(true)
+    if n ~= NP.sa_n then return render() end
+    for i, key in pairs(NP.rows) do
+        local nm = NP.row_spell(key)
+        ST:rml('sfnm' .. i, nm and C.esc(nm) or ('<span class="dim">' .. (key:match('^@gem') and '(empty)' or '(no proc)') .. '</span>'))
+    end
+end
+function NP.gems_page(r, dis)
+    local SF = NP.SF
+    NP.rows = {}
+    local _, n = SF.gems(true)
+    SF.slot_procs(true)
+    SF.log_diag()
+    NP.sa_n = n; NP.sa_next = C.now() + 1000
+    local i = 0
+    for g = 1, n do i = i + 1; r[#r + 1] = NP.row_html(i, '@gem' .. g, '(empty)', dis); NP.seed('sfnm' .. i, (NP.row_spell('@gem' .. g) and C.esc(NP.row_spell('@gem' .. g))) or '<span class="dim">(empty)</span>') end
+    r[#r + 1] = '<div style="height: 10px;"></div>'
+    for _, s in ipairs(SF.SLOTS) do i = i + 1; r[#r + 1] = NP.row_html(i, s.key, '(no proc)', dis); NP.seed('sfnm' .. i, (NP.row_spell(s.key) and C.esc(NP.row_spell(s.key))) or '<span class="dim">(no proc)</span>') end
+end
+-- the grid while picking for an entry (kept for old entries; not reachable from the simple list)
+function NP.give_bar(r, dis) NP.ak = nil end
 local function page_styles()
     local fs, r = C.cfg.fxstyle, {}
+    r[#r + 1] = NP.viewbar()                                   -- t471: Effects | Spell Gems & Procs, first thing on the page
+    if NP.view == 'gems' then NP.gems_page(r, not (PF.available())); return r end
     r[#r + 1] = row('Particle effects', C.particles_on() and PART_DESC or 'OFF: proc and crit looks below are not drawn', sw(C.particles_on(), toggle_particles))
-    r[#r + 1] = '<div class="sec">PROC LOOK &#183; <span class="dim">click a card to preview on your current target (or the center of the screen)</span></div>'
+    NP.page(r)
+    local native = PF.on() and (PF.available())
+    r[#r + 1] = '<div class="sec">PROC LOOK (OLD, SCREEN-DRAWN) &#183; <span class="dim">' .. (native and 'not used while native proc effects are on' or 'click a card to preview on your current target (or the center of the screen)') .. '</span></div>'
     for i, st in ipairs(C.FX_STYLES) do
         r[#r + 1] = style_card('proc', st, i, fs.proc == st.id)
     end
@@ -377,8 +661,8 @@ local function page_styles()
             function() fs[key] = math.max(lo, (fs[key] or 100) - 10); changed(false) end,
             function() fs[key] = math.min(hi, (fs[key] or 100) + 10); changed(false) end)
     end
-    r[#r + 1] = row('Size', 'How large the burst is on screen', step_pct('size', 50, 200))
-    r[#r + 1] = row('Brightness', 'Glow and particle brightness', step_pct('intensity', 50, 200))
+    r[#r + 1] = row('Size', 'Particle size of the native new effects (and the old burst)', step_pct('size', 50, 200))
+    r[#r + 1] = row('Brightness', 'Native effects: opacity, colour and particle count (150%+ layers EQ records); old burst glow', step_pct('intensity', 50, 200))
     r[#r + 1] = row('Duration', 'How long the burst lasts', step_pct('duration', 50, 200))
     r[#r + 1] = row('Color', 'Element color follows the style; override tints every burst',
         seg({ { 'element', 'Element color' }, { 'custom', 'Override' } }, fs.color_mode or 'element',
@@ -415,9 +699,9 @@ local function ground_card(which, prefix, preview_kind, st, i, selected)
 end
 -- ---- t436: native EQ aura picker (rml_nimbus_add_slot(1, ...)) ------------------------------------
 local na_cat, na_sel = 'all', nil
-local function na_status_html()
-    local f, raw = NA.status_text()
-    return string.format('<span style="font-size: 12px; color: #ece8fa;">%s</span><br/><span class="dim" style="font-size: 9px;">%s</span>', f, C.esc(raw or ''))
+local function na_status_html()                      -- t470: one fixed-height line; raw details only when opened
+    local f = NA.status_text()
+    return tostring(f or '')
 end
 local function na_sel_html()
     local n = na_sel and NA.D.by_id[na_sel]
@@ -429,6 +713,8 @@ local function na_refresh()
     if not (ST and ST.visible and tab == 'aura') then return end
     ST:rml('nastat', na_status_html())
     ST:rml('nasel', na_sel_html())
+    local t = C.now()
+    if NP.na_det and t >= (NP.na_det_t or 0) then NP.na_det_t = t + 1000; local _, raw = NA.status_text(); ST:rml('nadet', NP.det_html(raw)) end
 end
 local function na_card(n, i, cur, dis)
     local tag = (cur == n.id) and '<span class="stytag">WORN</span>' or ''
@@ -448,7 +734,10 @@ local function page_aura_native(r)
     if not ok then
         r[#r + 1] = '<div class="card"><span class="wn" style="font-size: 12px;">Native auras unavailable</span><br/><span class="dim" style="font-size: 11px;">' .. C.esc(why) .. '. The screen-drawn feet disc below still works.</span></div>'
     end
-    r[#r + 1] = '<div class="card" id="nastat">' .. na_status_html() .. '</div>'
+    do local sh = na_status_html(); NP.seed('nastat', sh)
+        r[#r + 1] = '<div class="card" id="nastat" style="' .. NP.STAT_STYLE .. '">' .. sh .. '</div>'
+        local _, raw = NA.status_text(); if NP.na_det then NP.seed('nadet', NP.det_html(raw)) end
+        r[#r + 1] = NP.det_box('nadet', raw, NP.na_det, function() NP.na_det = not NP.na_det; render() end) end
     local dis = not ok
     local function b(label, fn, cls) if dis then return string.format('<div class="btn %s" style="opacity: 0.4;">%s</div>', cls or '', label) end; return btn(label, fn, cls) end
     r[#r + 1] = '<div class="mknav">' ..
@@ -497,16 +786,42 @@ local function page_aura()
     end
     return r
 end
-local function page_trail()
-    local rt, r = C.cfg.runtrail, {}
-    r[#r + 1] = '<div class="sec">RUN TRAIL &#183; <span class="dim">marks drop at your feet while you move and fade after a second or two; nothing while standing still</span></div>'
-    r[#r + 1] = row('Run trail', 'Leave fading footprints when you run',
-        sw(rt.on, function() rt.on = not rt.on; changed(false); if rt.on then FX.preview_style(rt.style, 'trail') end end))
+local function page_trail()                      -- t485: foot trails played by EQ like its own nimbus trails (native slot 2)
+    local NT, r = require('combatfx.trails'), {}
+    local rt = NT.cfg()
+    local ok = NT.available()
+    if not NT.sel then NT.sel = rt.id end
+    r[#r + 1] = '<div class="sec">FOOT TRAIL &#183; <span class="dim">' .. (ok and 'EQ draws it on the ground behind you, like Nimbus of Lava' or 'old screen-drawn marks (install the t485 MQ2RmlUi for EQ trails)') .. '</span></div>'
+    do local sh = tostring((NT.status_text())); NP.seed('trstat', sh)
+        r[#r + 1] = '<div class="card" id="trstat" style="' .. NP.STAT_STYLE .. '">' .. sh .. '</div>' end
+    local sel = NT.D.by_id[NT.sel]
+    r[#r + 1] = '<div class="mknav">' ..
+        btn('&#9654;&#160; Preview', function()
+            local okp, w = NT.preview(NT.sel); msg = okp and ('Previewing ' .. (sel and sel.name or '') .. (NT.native() and ' for 12 s' or '')) or ('Could not preview: ' .. tostring(w)); render()
+        end, 'sm') ..
+        btn('&#10003;&#160; Wear', function()
+            NT.wear(NT.sel); msg = 'Foot trail: ' .. (sel and sel.name or '') .. ' (saved)'; changed(false); render()
+        end, 'sm pri') ..
+        btn('&#10005;&#160; Off', function() NT.off(); msg = 'Foot trail off'; changed(false); render() end, 'sm') ..
+        string.format('<span class="dim" style="font-size: 11px; margin-left: 8px;">%s%s</span>', C.esc(sel and sel.name or ''), (rt.on and rt.id == NT.sel) and ' &#183; worn' or '') .. '</div>'
     r[#r + 1] = '<div class="clr"></div>'
-    for i, st in ipairs(ground_styles()) do
-        r[#r + 1] = ground_card('runtrail', 't', 'trail', st, i, rt.style == st.id)
+    local i = 0
+    for _, n in ipairs(NT.D.list) do
+        if ok or n.style then                          -- without the native slot only the 12 looks (screen fallback) are offered
+            i = i + 1
+            local worn = rt.on and rt.id == n.id
+            r[#r + 1] = string.format('<div class="styc%s%s"%s><img class="styi" src="%s"/><span class="styn">%s</span>%s</div>',
+                i % 4 == 0 and ' c4' or '', (NT.sel == n.id) and ' sel' or '',
+                A(function() NT.select(n.id); msg = n.name .. ' selected (Preview plays it, Wear keeps it)'; render() end),
+                NT.thumb(n.id), C.esc(n.name), worn and '<span class="stytag">WORN</span>' or (n.kind == 'eq' and '<span class="stytag" style="background-color: #2a3550;">EQ</span>' or ''))
+        end
     end
+    r[#r + 1] = '<div class="clr"></div>'
     return r
+end
+NP.tr_refresh = function()
+    if not (ST and ST.visible and tab == 'trail') then return end
+    ST:rml('trstat', tostring((require('combatfx.trails').status_text())))
 end
 local function body_card(st, i, selected)
     return string.format('<div class="styc%s%s"%s><img class="styi" src="../img/thumbnb_%s.png"/><span class="styn">%s</span>%s</div>',
@@ -646,6 +961,33 @@ local function add_marker_rule(name, match)
     if CV and CV.marker_force_scan then CV.marker_force_scan() end
     changed(false)
 end
+-- t495: the nearby list fills when the page opens / Refresh (a full read now), then keeps itself current every 3 s
+function NP.mk_scan()
+    local CV = package.loaded['combatfx.canvas']
+    if not CV then return 0 end
+    if CV.marker_want_list then CV.marker_want_list(60000) end
+    local n = 0
+    if CV.marker_scan_now then local ok, v = pcall(CV.marker_scan_now); n = ok and tonumber(v) or 0 end
+    NP.mk_sig = NP.mk_sig_of()   -- what the page is about to show
+    return n
+end
+function NP.mk_sig_of()
+    local CV = package.loaded['combatfx.canvas']
+    local nb = (CV and CV.marker_nearby and CV.marker_nearby()) or {}
+    local t = { #nb }
+    for i = 1, math.min(12, #nb) do t[#t + 1] = tostring(nb[i].id) end
+    return table.concat(t, ',')
+end
+function NP.mk_refresh()
+    local t = C.now()
+    if t < (NP.mk_next or 0) then return end
+    NP.mk_next = t + 3000
+    local CV = package.loaded['combatfx.canvas']
+    if CV and CV.marker_want_list then CV.marker_want_list(60000) end
+    if CV and CV.marker_scan_now then pcall(CV.marker_scan_now) end   -- does not wait for the overlay frame (it may be idle / off)
+    local sig = NP.mk_sig_of()
+    if sig ~= NP.mk_sig then NP.mk_sig = sig; return render() end
+end
 local function page_mark()
     local mk = C.cfg.markers or { on = true, import_pf = false, pack = '' }
     local r = {}
@@ -668,7 +1010,8 @@ local function page_mark()
     local nearby = (CV and CV.marker_nearby and CV.marker_nearby()) or {}
     r[#r + 1] = '<div class="mknav">' .. btn('Refresh list', function()
         if CV and CV.marker_force_scan then CV.marker_force_scan() end
-        msg = 'Scanning nearby NPCs...'
+        local n = NP.mk_scan()
+        msg = n .. ' nearby NPCs'
         render()
     end, 'sm') .. string.format('<span class="dim"> %d nearby</span></div>', #nearby)
     if #nearby == 0 then
@@ -748,7 +1091,9 @@ end
 -- ---------------------------------------------------------------- orn1: Ornaments (client-side model swaps, previews rendered from the client's own models)
 local orn_slot, orn_kind, orn_q, orn_page, orn_sel = 'primary', 'all', '', 1, nil
 local ORN_PER = 12
-local ORN_KINDS_HELD = { { 'all', 'All' }, { 'w', 'Weapons' }, { 's', 'Shields / flat' }, { 'o', 'Other' }, { 'prt', 'Particles' }, { 'fav', '&#9733;' } }
+local ORN_KINDS_HELD = { { 'all', 'All' }, { 'w', 'Weapons' }, { 'sh', 'Shields' }, { 'o', 'Other' }, { 'prt', 'Particles' }, { 'fav', '&#9733;' } }
+local ORN_KINDS_MAIN = { { 'all', 'All' }, { 'w', 'Weapons' }, { 'o', 'Other' }, { 'prt', 'Particles' }, { 'fav', '&#9733;' } }   -- shieldfix: no shields in the main hand
+local ORN_KINDS_SHIELD = { { 'all', 'All' }, { 'prt', 'Particles' }, { 'fav', '&#9733;' } }
 local ORN_KINDS_ARM = { { 'all', 'All' }, { 'fav', '&#9733; Favourites' } }
 local function orn_img(it, big) return string.format('../img/orn/%sIT%d.jpg', big and '' or 't/', it) end
 -- orn-sets: whole armor set in one click (Sets button in the Ornaments slot row)
@@ -857,7 +1202,10 @@ local function orn_point_line()
     local s = OR.SLOT[orn_slot]
     local st = OR.status()
     local parts = {}
-    for i, pt in ipairs(s.pts) do
+    local pts = s.pts
+    if orn_slot == 'secondary' then pts = { s.pts[1], OR.SHIELD_PT } end   -- shieldfix: off hand = hand point or shield point
+    if OR.previewing() then parts[#parts + 1] = string.format('<span class="ok">Previewing on your character: %d s left</span>', OR.preview_left()) end
+    for i, pt in ipairs(pts) do
         local state, p = OR.point_state(pt)
         local w = OR.wanted()[pt]
         local now_tag = p and (p.tag or (p.empty and 'empty') or '?') or 'no point'
@@ -888,8 +1236,10 @@ end
 local function orn_detail_html(e)
     if not e then return '<div class="opbig opempty"><span class="dim">Click a model on the left to see it large</span></div>' end
     local _, fav = OR.favs()
-    return string.format('<div class="opbig"><img src="%s"/></div><div class="opname">%s%s</div><div class="opmeta">IT%d%s &#183; %s%s</div>',
+    local held = OR.SLOT[orn_slot] and OR.SLOT[orn_slot].held
+    return string.format('<div class="opbig"><img src="%s"/></div><div class="opname">%s%s</div><div class="opmeta">IT%d%s &#183; %s%s%s</div>',
         orn_img(e.it, true), fav[e.it] and '&#9733; ' or '', C.esc(e.label), e.it, e.pair and (' + IT' .. e.pair) or '', C.esc(e.group),
+        held and (OR.is_shield(e) and ' &#183; shield, worn on the arm' or ' &#183; held in the hand') or '',
         e.prt and ' &#183; <span class="ok">has its own particles</span>' or '')
 end
 local function page_orn()
@@ -917,7 +1267,10 @@ local function page_orn()
             r[#r + 1] = race_line(D.race, string.format('%d armor models', D.armor or 0))
         end
     end
-    r[#r + 1] = '<div style="margin-bottom: 5px;">' .. seg(s.held and ORN_KINDS_HELD or ORN_KINDS_ARM, orn_kind, function(k) orn_kind = k; orn_page = 1; render() end) .. '</div>'
+    local kinds = (orn_slot == 'primary' and ORN_KINDS_MAIN) or (orn_slot == 'shield' and ORN_KINDS_SHIELD) or (s.held and ORN_KINDS_HELD) or ORN_KINDS_ARM
+    local kind_ok = false; for _, k in ipairs(kinds) do if k[1] == orn_kind then kind_ok = true end end
+    if not kind_ok then orn_kind = 'all' end
+    r[#r + 1] = '<div style="margin-bottom: 5px;">' .. seg(kinds, orn_kind, function(k) orn_kind = k; orn_page = 1; render() end) .. '</div>'
     local list = OR.filter(orn_slot, orn_kind, orn_q)
     local pages = math.max(1, math.ceil(#list / ORN_PER))
     if orn_page > pages then orn_page = pages end
@@ -926,7 +1279,7 @@ local function page_orn()
     local tiles = {}
     for i = (orn_page - 1) * ORN_PER + 1, math.min(#list, orn_page * ORN_PER) do
         local e = list[i]
-        local on = w[s.pts[1]] == ('IT' .. e.it)
+        local on = w[OR.SLOT[OR.slot_for(e, orn_slot)].pts[1]] == ('IT' .. e.it)
         tiles[#tiles + 1] = string.format('<div class="otile%s%s"%s><img src="%s"/><span class="ol">%s%s%s</span></div>',
             orn_sel == e and ' sel' or '', on and ' on' or '', A(function() orn_sel = e; render() end), orn_img(e.it),
             fav[e.it] and '&#9733;' or '', e.prt and '&#10022;' or '', C.esc(e.label))
@@ -939,9 +1292,15 @@ local function page_orn()
     local e = orn_sel
     local btns = {}
     if e then
-        btns[#btns + 1] = btn('&#10003;&#160; Apply to ' .. s.label, function()
+        local to = OR.SLOT[OR.slot_for(e, orn_slot)] or s
+        btns[#btns + 1] = btn('&#9654;&#160; Preview', function()       -- live: on your character for 12 s, not saved
+            local okp, info = OR.preview(e, orn_slot)
+            msg = okp and string.format('Previewing %s on your %s for %d s (Apply keeps it)', e.label, to.label:lower(), math.floor(OR.PREVIEW_MS / 1000)) or ('Could not preview: ' .. tostring(info))
+            render()
+        end, 'sm')
+        btns[#btns + 1] = btn('&#10003;&#160; Apply to ' .. to.label, function()
             local okk, info = OR.apply(e, orn_slot)
-            msg = okk and string.format('%s on %s (saved; comes back after zoning)', e.label, s.label) or ('Could not apply: ' .. tostring(info))
+            msg = okk and string.format('%s on %s (saved; comes back after zoning)', e.label, to.label) or ('Could not apply: ' .. tostring(info))
             render()
         end, 'sm pri')
         btns[#btns + 1] = btn(fav[e.it] and '&#9733; Unfavourite' or '&#9734; Favourite', function() OR.toggle_fav(e.it); render() end, 'sm')
@@ -956,7 +1315,7 @@ local function page_orn()
         sw(C.cfg.orn.auto ~= false, function() C.cfg.orn.auto = not (C.cfg.orn.auto ~= false); changed(false) end))
     r[#r + 1] = row('Keep on stop', 'Leave ornaments on when CombatFX stops (until you zone)',
         sw(C.cfg.orn.keep == true, function() C.cfg.orn.keep = not (C.cfg.orn.keep == true); changed(false) end))
-    r[#r + 1] = '<div class="dim" style="font-size: 10px; margin: 4px 0px 8px 0px;">Previews are rendered from this client\'s own model files. Names come from the armor set data or the model\'s texture names. &#10022; = the model brings its own particles. Search with the box at the bottom (name, set, or IT number).</div>'
+    r[#r + 1] = '<div class="dim" style="font-size: 10px; margin: 4px 0px 8px 0px;">Click a picture to select it. Preview puts it on your character for 12 s; Apply keeps it. Shields always go on your arm. &#10022; = has its own particles.</div>'
     return r
 end
 
@@ -1469,18 +1828,69 @@ local function page_lo()
     return r
 end
 
-local PAGES = { { 'events', 'Colours', page_events }, { 'text', 'Text &amp; Motion', page_text }, { 'fx', 'Effects', page_fx }, { 'styles', 'Proc FX', page_styles }, { 'aura', 'Aura', page_aura }, { 'trail', 'Trail', page_trail }, { 'body', 'Body FX', page_body }, { 'mark', 'Markers', page_mark }, { 'themes', 'Themes', page_themes }, { 'combat', 'Combat+', page_combat }, { 'alerts', 'Alerts', page_alerts }, { 'sim', 'Simulator', page_sim }, { 'track', 'XP &amp; Loot', page_track }, { 'orn', 'Ornaments', page_orn }, { 'parses', 'Parses', page_parses }, { 'tracking', 'Tracking', page_tracking }, { 'lo', 'Loadouts', page_lo } }
+-- t494: two-level nav. Top row = 3 groups; second row = only that group's pages (the others are in the markup, hidden,
+-- so every page keeps its id / handler). Last group + last page per group remembered in C.cfg.nav.
+local PAGES = { { 'styles', 'Proc FX', page_styles }, { 'aura', 'Aura', page_aura }, { 'trail', 'Trail', page_trail }, { 'body', 'Body FX', page_body }, { 'orn', 'Ornaments', page_orn },
+    { 'events', 'Colours', page_events }, { 'combat', 'Combat+', page_combat }, { 'text', 'Text &amp; Motion', page_text }, { 'fx', 'Effects', page_fx }, { 'themes', 'Themes', page_themes }, { 'alerts', 'Alerts', page_alerts }, { 'sim', 'Simulator', page_sim }, { 'track', 'XP &amp; Loot', page_track }, { 'tracking', 'Tracking', page_tracking }, { 'lo', 'Loadouts', page_lo },
+    { 'mark', 'Markers', page_mark }, { 'parses', 'Parses', page_parses } }
+NP.GROUPS = { { 'vis', 'Visuals', { 'styles', 'aura', 'trail', 'body', 'orn' } },
+    { 'set', 'Settings/UI', { 'events', 'combat', 'text', 'fx', 'themes', 'alerts', 'sim', 'track', 'tracking', 'lo' } },
+    { 'zm', 'Markers &amp; Parses', { 'mark', 'parses' } } }
+function NP.group_of(id)
+    for _, g in ipairs(NP.GROUPS) do for _, x in ipairs(g[3]) do if x == id then return g end end end
+    return NP.GROUPS[1]
+end
+function NP.nav()
+    C.cfg.nav = type(C.cfg.nav) == 'table' and C.cfg.nav or {}
+    return C.cfg.nav
+end
+-- open a page (same side effects the old tab buttons had); remembers it as the group's page
+function NP.open_tab(id, init)
+    tab = id
+    if id == 'themes' then saved_cache = nil; in_mode = 'theme'; M.set_input('Save current as', C.cfg.theme ~= 'Custom' and C.cfg.theme or '') elseif id == 'events' then in_mode = 'hex'; M.set_input('Colour for ' .. C.KIND_LABEL[sel_kind], C.cfg.color[sel_kind]) elseif id == 'mark' then in_mode = 'marker'; M.set_input('NPC name to mark', ''); NP.mk_scan(); NP.mk_next = C.now() + 3000 elseif id == 'body' then in_mode = 'nimbus'; M.set_input('Search nimbus', nim_q) elseif id == 'orn' then in_mode = 'orn'; M.set_input('Search ornaments', orn_q) elseif id == 'alerts' then in_mode = 'procs'; M.set_input('Proc names', C.cfg.alerts.procs) elseif id == 'parses' then in_mode = 'pq'; M.set_input('Search fights (mob, zone or tag)', ph_q) elseif id == 'tracking' then in_mode = 'castl'; M.set_input('Danger list (spells / actions)', TK.cfg().cast_list) elseif id == 'styles' then NP.input() elseif id == 'lo' then in_mode = 'loname'; M.set_input('Save current setup as', lo_sel or '') end
+    local g, n = NP.group_of(id), NP.nav()
+    if n.top ~= g[1] or n[g[1]] ~= id then n.top, n[g[1]] = g[1], id; if not init then C.save_cfg() end end
+    if not init then render() end
+end
+function NP.nav_init()
+    if NP.nav_done then return end
+    NP.nav_done = true
+    local n, g = NP.nav(), nil
+    for _, x in ipairs(NP.GROUPS) do if x[1] == n.top then g = x end end
+    g = g or NP.GROUPS[1]
+    local id = n[g[1]]
+    if NP.group_of(id or '')[1] ~= g[1] or not id then id = g[3][1] end
+    NP.open_tab(id, true)
+end
+function NP.tabs_html()
+    local cur, n, t = NP.group_of(tab), NP.nav(), {}
+    for _, g in ipairs(NP.GROUPS) do
+        t[#t + 1] = string.format('<div class="tab top%s"%s>%s</div>', g == cur and ' sel' or '', A(function()
+            local id = n[g[1]]; if not id or NP.group_of(id) ~= g then id = g[3][1] end
+            NP.open_tab(id)
+        end), g[2])
+    end
+    for _, p in ipairs(PAGES) do
+        t[#t + 1] = string.format('<div class="tab sub%s%s"%s>%s</div>', tab == p[1] and ' sel' or '', NP.group_of(p[1]) ~= cur and ' hid' or '', A(function() NP.open_tab(p[1]) end), p[2])
+    end
+    local rows = math.ceil(#cur[3] / 5)                       -- 5 per row: Settings/UI (10) = 2 rows, never overlapping
+    local h = 32 + rows * 28
+    ST:style('tabs', 'height', h .. 'px'); ST:style('spage', 'top', (78 + h) .. 'px')
+    return table.concat(t)
+end
 
 render = function()
     if not ST or not ST.visible then return end
     acts, nact = {}, 0
-    local t = {}
-    for _, p in ipairs(PAGES) do t[#t + 1] = string.format('<div class="tab%s"%s>%s</div>', tab == p[1] and ' sel' or '', A(function() tab = p[1]; if p[1] == 'themes' then saved_cache = nil; in_mode = 'theme'; M.set_input('Save current as', C.cfg.theme ~= 'Custom' and C.cfg.theme or '') elseif p[1] == 'events' then in_mode = 'hex'; M.set_input('Colour for ' .. C.KIND_LABEL[sel_kind], C.cfg.color[sel_kind]) elseif p[1] == 'mark' then in_mode = 'marker'; M.set_input('NPC name to mark', '') elseif p[1] == 'body' then in_mode = 'nimbus'; M.set_input('Search nimbus', nim_q) elseif p[1] == 'orn' then in_mode = 'orn'; M.set_input('Search ornaments', orn_q) elseif p[1] == 'alerts' then in_mode = 'procs'; M.set_input('Proc names', C.cfg.alerts.procs) elseif p[1] == 'parses' then in_mode = 'pq'; M.set_input('Search fights (mob, zone or tag)', ph_q) elseif p[1] == 'tracking' then in_mode = 'castl'; M.set_input('Danger list (spells / actions)', TK.cfg().cast_list) elseif p[1] == 'lo' then in_mode = 'loname'; M.set_input('Save current setup as', lo_sel or '') end; render() end), p[2]) end
-    ST:rml('tabs', table.concat(t))
-    ST:class('body', 'inp', tab == 'events' or tab == 'themes' or tab == 'mark' or tab == 'body' or tab == 'orn' or tab == 'alerts' or tab == 'lo' or (tab == 'parses' and (pview == 'hist' or in_mode == 'plabel' or in_mode == 'burns')) or (tab == 'tracking' and (tview == 'cast' or tview == 'spawn')))
+    NP.nav_init()
+    ST:rml('tabs', NP.tabs_html())
+    local inp = tab == 'events' or tab == 'themes' or tab == 'mark' or tab == 'body' or tab == 'orn' or tab == 'alerts' or tab == 'lo' or (tab == 'parses' and (pview == 'hist' or in_mode == 'plabel' or in_mode == 'burns')) or (tab == 'tracking' and (tview == 'cast' or tview == 'spawn'))
+        or (tab == 'styles' and NP.view ~= 'gems')                                   -- Proc FX effect search
+    ST:class('body', 'inp', inp)
     local body
     for _, p in ipairs(PAGES) do if p[1] == tab then body = p[3]() end end
     ST:rml('spage', table.concat(body or {}))
+    ST:style('inrow', 'display', inp and 'block' or 'none')   -- t492: only the tab that owns it (t472 forced 'block' on every tab: Proc names everywhere)
     ST:text('smsg', msg ~= '' and msg or 'Changes save automatically for this character')
     ST:rml('who', C.esc(C.CHAR) .. ' &#183; ' .. C.esc(C.cfg.theme))
     ST:text('status', SIM.active() and 'Simulating' or (C.cfg.master and 'Effects on' or 'Effects off'))
@@ -1507,6 +1917,7 @@ function M.set_color(kind, c)
 end
 local function apply_input()
     local v = ST:value('inp')
+    if in_mode == 'npq' then return NP.apply(v) end      -- t470: Proc FX search / add a spell
     if in_mode == 'theme' then
         local ok, r = C.save_theme(v); msg = ok and ('Saved theme "' .. r .. '"') or ('Could not save: ' .. r)
         saved_cache = nil; M.set_input('Save current as', ''); render()
@@ -1600,7 +2011,7 @@ function M.toggle_settings(force)
     if on then
         local sw_, sh = C.screen()
         if not M._placed and not C.saved_pos('Settings') then M._placed = true; ST:place(math.floor(sw_ / 2 - SW_ / 2), math.floor(sh / 2 - SH_ / 2), SW_, SH_) end
-        if tab == 'themes' then M.set_input('Save current as', '') elseif tab == 'mark' then in_mode = 'marker'; M.set_input('NPC name to mark', '') elseif tab == 'body' then in_mode = 'nimbus'; M.set_input('Search nimbus', nim_q) elseif tab == 'orn' then in_mode = 'orn'; M.set_input('Search ornaments', orn_q) elseif tab == 'alerts' then in_mode = 'procs'; M.set_input('Proc names', C.cfg.alerts.procs) else M.set_input('Colour for ' .. C.KIND_LABEL[sel_kind], C.cfg.color[sel_kind]) end
+        if tab == 'themes' then M.set_input('Save current as', '') elseif tab == 'mark' then in_mode = 'marker'; M.set_input('NPC name to mark', '') elseif tab == 'body' then in_mode = 'nimbus'; M.set_input('Search nimbus', nim_q) elseif tab == 'orn' then in_mode = 'orn'; M.set_input('Search ornaments', orn_q) elseif tab == 'alerts' then in_mode = 'procs'; M.set_input('Proc names', C.cfg.alerts.procs) elseif tab == 'styles' then NP.input() else M.set_input('Colour for ' .. C.KIND_LABEL[sel_kind], C.cfg.color[sel_kind]) end
         render()
     end
 end
@@ -1612,9 +2023,14 @@ local function on_launcher(ev)
 end
 local function on_settings(ev)
     local a = ev.action or ''
+    if (ev.type == 'change' or ev.type == 'submit') and tab == 'styles' then        -- t489: typing does nothing; Enter = that row's Set
+        local ri = tostring(ev.id or ''):match('^sfn(%d+)$')
+        if ri then if ev.type == 'submit' then return NP.num_typed(tonumber(ri), ST:value(ev.id)) end; return end
+    end
     if ev.type == 'submit' or (ev.type == 'click' and a == 'in:ok') then return apply_input() end
     if ev.type ~= 'click' then return end
     if a == 'close' then return M.toggle_settings(false) end
+    if a == 'test' and tab == 'styles' then return NP.preview() end   -- t465: Proc FX tab: play the picked native proc effect
     if a == 'test' then SIM.showcase(); msg = 'Preview running: every effect over about 6 seconds'; return render() end
     local fn = acts[a]; if fn then fn() end
 end
@@ -1674,7 +2090,10 @@ function M.frame()
             end
             orn_refresh()
         end
+        if tab == 'mark' then NP.mk_refresh() end   -- t495: nearby list stays current
         if tab == 'aura' then na_refresh() end      -- t436: native aura status line (2 Hz)
+        if tab == 'trail' then NP.tr_refresh() end   -- t485: native foot trail status line
+        if tab == 'styles' then NP.refresh() end    -- t464: native proc effect status line (2 Hz)
         if tab == 'parses' and in_mode == 'pq' then   -- f8b: history search filters as you type
             local v = ST:value('inp')
             if v ~= ph_q then ph_q = v; ph_page = 1; render() end

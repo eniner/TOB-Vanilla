@@ -8,6 +8,7 @@ local A = require('combatfx.addons')
 local FT = require('combatfx.features')   -- f8
 local PS = require('combatfx.parses')     -- f8b
 local TK = require('combatfx.track')      -- f10
+local SF = require('combatfx.spellfx')    -- t470: Spell assignments (Proc FX tab)
 local M = { handlers = {}, queue = {}, registered = 0, matched = 0 }
 local Q = M.queue
 M.last_line, M.last_handler = '', ''
@@ -282,6 +283,27 @@ local function do_burst(typ, handler, line, sp)
     last_burst = C.now()
     FX.burst(resist_of(typ, sp), handler or M.last_handler, line or M.last_line)
 end
+-- t471: the spell's cast time (ms) for the gem-cast fallback below; MQ gives seconds (float) or ms depending on the build
+function M.cast_ms(sp)
+    local v = C.num(function() return mq.TLO.Spell(sp).MyCastTime() end, nil)
+    if not v or v < 0 then v = C.num(function() return mq.TLO.Spell(sp).CastTime() end, nil) end
+    if not v or v < 0 then return 3000 end
+    if v < 60 then v = v * 1000 end
+    return math.min(30000, math.floor(v))
+end
+-- t470: 'cast' = the spell you just cast landed; any other spell damage of yours is a proc (weapon / item / AA)
+local function spell_kind(sp)
+    if cast.sp and sp and SF.key(cast.sp) == SF.key(sp) and C.now() - cast.t < 15000 then return 'cast' end
+    return 'proc'
+end
+-- t470: the spell's own assigned effect (Proc FX > Spell assignments); true = it owned the moment (skip the Auto burst)
+local function sfx(sp, kind, crit, typ)
+    if not sp or sp == '' then return false end
+    if kind == 'cast' and cast.sp and SF.key(cast.sp) == SF.key(sp) then cast.done = true end      -- t471: this cast has landed
+    local ok, own = pcall(SF.on_spell, sp, kind, crit, resist_of(typ, sp))
+    return ok and own == true
+end
+M._sfx = sfx
 local function hit_out(n)
     last_out = C.now(); ensure_fight()
     S.fight_dmg = S.fight_dmg + n; rec(S.out, n)
@@ -370,13 +392,20 @@ function M.one(r)
         elseif k == 'out' and r.n then
             FX.number(r.src == 'ds' and 'spell' or r.src, r.n, school_opts(r, nil)); hit_out(r.n); A.hit(r.n, false)
             FT.enc_hit(ab_name(r), r.n, false, C.now())
-            if r.src == 'spell' then mark_spell(r.n); do_burst(r.typ, nil, nil, r.sp) end
+            if r.src == 'spell' then
+                mark_spell(r.n)
+                if sfx(r.sp, spell_kind(r.sp), false, r.typ) then last_burst = C.now() else do_burst(r.typ, nil, nil, r.sp) end
+            elseif r.src == 'dot' then sfx(r.sp, 'dot', false, r.typ) end
         elseif k == 'crit' and r.n then
             FX.number('crit', r.n, school_opts(r, { crit = true })); FX.crit_flash(); hit_out(0)
             S.fight_dmg = S.fight_dmg + r.n; rec(S.out, r.n); A.hit(r.n, true)
             crit_ab = ab_name(r); FT.enc_hit(crit_ab, r.n, true, C.now())
             -- typed spell / proc crits keep the stronger gold crit and add a tight colored flash
-            if r.src == 'spell' or r.typ then mark_spell(r.n); do_burst(r.typ, nil, nil, r.sp) end
+            if r.src == 'spell' or r.typ then
+                mark_spell(r.n)
+                local kd = r.src == 'dot' and 'dot' or spell_kind(r.sp)
+                if r.src ~= 'melee' and sfx(r.sp, kd, true, r.typ) then last_burst = C.now() else do_burst(r.typ, nil, nil, r.sp) end
+            end
         elseif k == 'in' and r.n then
             last_in = C.now(); ensure_fight(); A.count('inhits')
             FX.number('incoming', r.n, { prefix = '-' }); rec(S.inc, r.n)
@@ -413,6 +442,7 @@ function M.one(r)
                 A.count('petdmg', r.n); S.fight_dmg = S.fight_dmg + r.n; rec(S.out, r.n)
                 FT.enc_other('pet', r.n)
                 if FX.on('pet') then FX.number('pet', r.n) end
+                if r.spell and r.sp then sfx(r.sp, 'pet', r.crit, r.typ) end      -- t470: your pet's spell (assignable)
             elseif r.who and A.is_group(r.who) then
                 -- f8: a group member's hit (only when EQ shows others' hits in chat); never counted as your damage
                 local oc = ocrit[r.who:lower()]
@@ -444,7 +474,7 @@ function M.one(r)
         elseif k == 'killby' then
             -- kills by others are not celebrated; a group member dying is an alert (add-on)
             A.slain_other(r.who, r.by)
-        elseif k == 'cast' then cast = { sp = r.sp, t = C.now(), fail = false }; A.cast(r.sp)
+        elseif k == 'cast' then cast = { sp = r.sp, t = C.now(), fail = false, ct = M.cast_ms(r.sp) }; A.cast(r.sp)
         elseif k == 'castfail' then cast.fail = true; FX.cast_stop()
         end
     end
@@ -495,17 +525,31 @@ function M.watch()
         W.tpct = st.tpct
     end
     -- cast landing: casting -> idle without an interrupt/fizzle/resist
+    if (st.casting or '') ~= '' then cast.seen = true end
+    -- t471: a gem cast MQ never reported as casting (instant / very short casts, or Me.Casting unreadable): after its
+    -- cast time with no interrupt / fizzle / resist and no damage line, it landed -> its assigned effect (no Auto burst)
+    if cast.sp and not cast.done and not cast.fail and not cast.seen and (st.casting or '') == '' and W.casting == ''
+        and now > cast.t + (cast.ct or 3000) + 700 and now - cast.t < 30000 then
+        cast.done = true
+        sfx(cast.sp, 'cast', false, nil)
+    end
     if W.casting ~= '' and st.casting == '' then
         FX.cast_stop()
         local c = cast
         -- only if no damage line already spawned a proc/burst (avoids stacking two clouds per nuke)
-        if not c.fail and now - c.t < 20000 and now - last_out > 500 and now - last_burst > 500 then do_burst(nil, 'cast-end', W.casting, W.casting) end
+        c.done = true
+        if not c.fail and now - c.t < 20000 then
+            -- t470: an assigned spell plays its own effect (heals / buffs too); otherwise the Auto cast-end burst
+            if sfx(W.casting, 'cast', false, nil) then last_burst = now
+            elseif now - last_out > 500 and now - last_burst > 500 then do_burst(nil, 'cast-end', W.casting, W.casting) end
+        end
         cast.fail = false
     end
     W.casting = st.casting or ''
     -- f8: live meter (2 Hz, diffed writes) and loot moments (FindItem once the item is in your bags)
     if now >= (W.lm_next or 0) then
         W.lm_next = now + 500
+        pcall(SF.tick)                                                        -- t470: save Spell assignments (debounced)
         if S.fight_t0 then FX.meter_live(FT.meter_data(now, (M.rates()))) else FX.meter_live(nil) end
     end
     local i = 1
